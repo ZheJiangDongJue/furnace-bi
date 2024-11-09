@@ -1,0 +1,331 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>可视化平台</title>
+    <link rel="stylesheet" href="./css/index.css">
+    <link rel="stylesheet" href="./fonts/icomoon.css">
+</head>
+
+<body>
+    <div class="viewport">
+        <!--左侧区域-->
+        <div class="column">
+            <!-- 区块状态 炉膛温度 -->
+            <div class="wrap">
+                <div class="channel panel">
+                    <div class="inner">
+                        <h3>模块状态</h3>
+                        <div class="chart">
+                            <div class="item">
+                                <h4>进行中 </h4>
+                                <span>
+                                    <i class="icon-plane"></i>
+                                    加热
+                                </span>
+                            </div>
+                            <div class="item">
+                                <h4>进行中 </h4>
+                                <span>
+                                    <i class="icon-plane"></i>
+                                    真空泵
+                                </span>
+                            </div>
+                            <div class="item">
+                                <h4>进行中</h4>
+                                <span>
+                                    <i class="icon-plane"></i>
+                                    对流风机
+                                </span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="quarter panel">
+                    <div class="inner">
+                        <h3>炉膛温度</h3>
+                        <div class="chart">
+                            <div class="box">
+                                <div class="gauge"></div>
+                                <div class="label">75<small> ℃</small></div>
+                            </div>
+                            <div class="data">
+                                <div class="item">
+                                    <h4>1321℃</h4>
+                                    <span>
+                                        <i class="icon-dot" style="color: #6acca3"></i>
+                                        最高温度
+                                    </span>
+                                </div>
+                                <div class="item">
+                                    <h4 id="status">-100℃</h4>
+                                    <span>
+                                        <i class="icon-dot" style="color: #ed3f35"></i>
+                                        最低温度
+                                    </span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!--设备-->
+            <div class="point panel">
+                <div class="inner">
+                            <h3>上区</h3>
+                            <div class="chart">
+                                <div class="item">
+                                    <h4>32 <small>℃</small></h4>
+                                    <span>
+                                    <i class="icon-plane"></i>
+                                    PV
+                                </span>
+                                </div>
+                                <div class="item">
+                                    <h4>45 <small>℃</small></h4>
+                                    <span>
+                                    <i class="icon-plane"></i>
+                                    SV
+                                </span>
+                                </div>
+                                <div class="item">
+                                    <h4>12 <small>%</small></h4>
+                                    <span>
+                                    <i class="icon-plane"></i>
+                                    输出
+                                </span>
+                                </div>
+                                <div class="item">
+                                    <h4>12 <small>分钟</small></h4>
+                                    <span>
+                                    <i class="icon-plane"></i>
+                                    时间
+                                </span>
+                                </div>
+                            </div>
+
+                        </div>
+            </div>
+            <div class="point panel">
+                        <div class="inner">
+                            <h3>中区</h3>
+                            <div class="chart">
+                                <div class="item">
+                                    <h4>19 <small>℃</small></h4>
+                                    <span>
+                                    <i class="icon-plane"></i>
+                                    PV
+                                </span>
+                                </div>
+                                <div class="item">
+                                    <h4>19 <small>℃</small></h4>
+                                    <span>
+                                    <i class="icon-plane"></i>
+                                    SV
+                                </span>
+                                </div>
+                                <div class="item">
+                                    <h4>12 <small>%</small></h4>
+                                    <span>
+                                    <i class="icon-plane"></i>
+                                    输出
+                                </span>
+                                </div>
+                                <div class="item">
+                                    <h4>12 <small>分钟</small></h4>
+                                    <span>
+                                    <i class="icon-plane"></i>
+                                    时间
+                                </span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+            <div class="point panel">
+                        <div class="inner">
+                            <h3>下区</h3>
+                            <div class="chart">
+                                <div class="item">
+                                    <h4>39 <small>℃</small></h4>
+                                    <span>
+                                    <i class="icon-plane"></i>
+                                    PV
+                                </span>
+                                </div>
+                                <div class="item">
+                                    <h4>39 <small>℃</small></h4>
+                                    <span>
+                                    <i class="icon-plane"></i>
+                                    SV
+                                </span>
+                                </div>
+                                <div class="item">
+                                    <h4>12 <small>%</small></h4>
+                                    <span>
+                                    <i class="icon-plane"></i>
+                                    输出
+                                </span>
+                                </div>
+                                <div class="item">
+                                    <h4>12 <small>分钟</small></h4>
+                                    <span>
+                                    <i class="icon-plane"></i>
+                                    时间
+                                </span>
+                                </div>
+                            </div>
+                        </div>
+
+                    </div>
+        </div>
+        <!--中间区域-->
+        <div class="column">
+            <!-- 温度趋势 -->
+            <div class="sales panel">
+                <div class="inner">
+                    <div class="caption">
+                        <h3>温度趋势</h3>
+                        <a href="javascript:;" class="active" data-type="year">年</a>
+                        <a href="javascript:;" data-type="quarter">季</a>
+                        <a href="javascript:;" data-type="month">月</a>
+                        <a href="javascript:;" data-type="week">周</a>
+                    </div>
+                    <div class="chart">
+                        <div class="label">单位:世纪</div>
+                        <div class="line"></div>
+                    </div>
+                </div>
+            </div>
+
+            <div  class="PriceCopper" style="width: 100%; height: 250px;"></div>
+
+        </div>
+        <!--右侧区域-->
+        <div class="column">
+            <!--生产实时明细-->
+            <div class="monitor panel">
+                <div class="inner">
+                    <div class="tabs">
+                        <a href="javascript:;" data-index="0" class="active">生产实时明细</a>
+                    </div>
+                    <div class="content" style="display: block;">
+                        <div class="head">
+                            <span class="col">物料编码</span>
+                            <span class="col">物料名称</span>
+                            <span class="col">规格型号</span>
+                            <span class="col">设备编号</span>
+                            <span class="col">设备名称</span>
+                            <span class="col">状态</span>
+                        </div>
+                        <div class="marquee-view">
+                            <div class="marquee">
+                                <div class="row">
+                                    <span class="col">2001M0018</span>
+                                    <span class="col">绞线</span>
+                                    <span class="col">63/0.1mm(正绞)</span>
+                                    <span class="col">DJ0001</span>
+                                    <span class="col">退火炉</span>
+                                    <span class="col">执行中</span>
+                                    <span class="icon-dot"></span>
+                                </div>
+                                <div class="row">
+                                    <span class="col">2001M0018</span>
+                                    <span class="col">绞线</span>
+                                    <span class="col">63/0.1mm(正绞)</span>
+                                    <span class="col">DJ0001</span>
+                                    <span class="col">退火炉</span>
+                                    <span class="col">执行中</span>
+                                    <span class="icon-dot"></span>
+                                </div>
+                                <div class="row">
+                                    <span class="col">2001M0018</span>
+                                    <span class="col">绞线</span>
+                                    <span class="col">63/0.1mm(正绞)</span>
+                                    <span class="col">DJ0001</span>
+                                    <span class="col">退火炉</span>
+                                    <span class="col">执行中</span>
+                                    <span class="icon-dot"></span>
+                                </div>
+                                <div class="row">
+                                    <span class="col">2002M0019</span>
+                                    <span class="col">电线</span>
+                                    <span class="col">50/0.15mm(正绞)</span>
+                                    <span class="col">DJ0002</span>
+                                    <span class="col">退火炉</span>
+                                    <span class="col">已完成</span>
+                                    <span class="icon-dot"></span>
+                                </div>
+                                <div class="row">
+                                    <span class="col">2003M0020</span>
+                                    <span class="col">钢绞线</span>
+                                    <span class="col">45/0.2mm(反绞)</span>
+                                    <span class="col">DJ0003</span>
+                                    <span class="col">退火炉</span>
+                                    <span class="col">待启动</span>
+                                    <span class="icon-dot"></span>
+                                </div>
+                                <div class="row">
+                                    <span class="col">2001M0018</span>
+                                    <span class="col">绞线</span>
+                                    <span class="col">63/0.1mm(正绞)</span>
+                                    <span class="col">DJ0001</span>
+                                    <span class="col">退火炉</span>
+                                    <span class="col">执行中</span>
+                                    <span class="icon-dot"></span>
+                                </div>
+                                <div class="row">
+                                    <span class="col">2001M0018</span>
+                                    <span class="col">绞线</span>
+                                    <span class="col">63/0.1mm(正绞)</span>
+                                    <span class="col">DJ0001</span>
+                                    <span class="col">退火炉</span>
+                                    <span class="col">执行中</span>
+                                    <span class="icon-dot"></span>
+                                </div>
+                                <div class="row">
+                                    <span class="col">2001M0018</span>
+                                    <span class="col">绞线</span>
+                                    <span class="col">63/0.1mm(正绞)</span>
+                                    <span class="col">DJ0001</span>
+                                    <span class="col">退火炉</span>
+                                    <span class="col">执行中</span>
+                                    <span class="icon-dot"></span>
+                                </div>
+                                <div class="row">
+                                    <span class="col">2001M0018</span>
+                                    <span class="col">绞线</span>
+                                    <span class="col">63/0.1mm(正绞)</span>
+                                    <span class="col">DJ0001</span>
+                                    <span class="col">退火炉</span>
+                                    <span class="col">执行中</span>
+                                    <span class="icon-dot"></span>
+                                </div>
+                                <div class="row">
+                                    <span class="col">2001M0018</span>
+                                    <span class="col">绞线</span>
+                                    <span class="col">63/0.1mm(正绞)</span>
+                                    <span class="col">DJ0001</span>
+                                    <span class="col">退火炉</span>
+                                    <span class="col">执行中</span>
+                                    <span class="icon-dot"></span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="button"></div>
+</body>
+
+<script src="./node_modules/jquery/dist/jquery.min.js"></script>
+<script src="./node_modules/echarts/dist/echarts.min.js"></script>
+
+<script src="./js/index.js"></script>
+
+
+</html>
