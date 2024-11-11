@@ -24,6 +24,7 @@
         setFont();
     }
 })();
+
 // 选项卡绑定
 (function () {
     // 事件委托：为 .monitor 下的所有 <a> 标签绑定点击事件
@@ -51,7 +52,137 @@
     });
 })();
 
-// 温度折线图
+// 模块状态（定时器）
+(function () {
+    document.addEventListener('DOMContentLoaded', () => {
+
+        // 模拟 API 返回的数据
+        function simulateAPI() {
+            // 随机生成状态，可能的状态有“进行中”，“停止”，“故障”等
+            const statuses = ['进行中', '停止'];
+
+            // 返回模拟的模块状态
+            const data = {
+                heatingStatus: statuses[Math.floor(Math.random() * statuses.length)],   // 加热状态
+                vacuumPumpStatus: statuses[Math.floor(Math.random() * statuses.length)],  // 真空泵状态
+                fanStatus: statuses[Math.floor(Math.random() * statuses.length)],   // 对流风机状态
+            };
+
+            return data;  // 返回模拟的数据
+        }
+
+        // 更新页面中的模块状态
+        function updateData(data) {
+            // 更新加热状态
+            document.getElementById('heatingStatus').innerHTML = data.heatingStatus;
+
+            // 更新真空泵状态
+            document.getElementById('vacuumPumpStatus').innerHTML = data.vacuumPumpStatus;
+
+            // 更新对流风机状态
+            document.getElementById('fanStatus').innerHTML = data.fanStatus;
+        }
+
+        // 每 5 秒钟模拟一次 API 调用并更新数据
+        setInterval(() => {
+            const newData = simulateAPI();  // 获取新的状态数据
+            updateData(newData);  // 更新页面上的显示
+        }, 1000);  // 每 5 秒更新一次
+    });
+})();
+
+// 炉膛温度、最高温度、最低温度（定时器）
+(function () {
+    // 当文档加载完成时执行
+    document.addEventListener('DOMContentLoaded', () => {
+
+        // 模拟 API 返回的数据
+        function simulateAPI() {
+            // 生成随机数据来模拟实时数据变化
+            const data = {
+                currentTemperature: Math.floor(Math.random() * (300 - 200 + 1)) + 200,  // 随机生成当前温度，范围在 200 到 300℃ 之间
+                maxTemperature: Math.floor(Math.random() * (300 - 200 + 1)) + 200,      // 随机生成最高温度，范围在 200 到 300℃ 之间
+                minTemperature: Math.floor(Math.random() * (300 - 200 + 1)) + 200,      // 随机生成最低温度，范围在 200 到 300℃ 之间
+            };
+
+            return data;  // 返回模拟的数据
+        }
+
+        // 更新页面中的数据显示
+        function updateData(data) {
+            // 更新当前温度
+            document.getElementById('currentTemperature').innerHTML = `${data.currentTemperature} <small>℃</small>`;
+
+            // 更新最高温度
+            document.getElementById('maxTemperature').innerHTML = `${data.maxTemperature}℃`;
+
+            // 更新最低温度
+            document.getElementById('minTemperature').innerHTML = `${data.minTemperature}℃`;
+        }
+
+        // 每 5 秒钟模拟一次 API 调用并更新数据
+        setInterval(() => {
+            const newData = simulateAPI();  // 获取新的数据
+            updateData(newData);  // 使用新的数据更新页面上的显示
+        }, 1000);  // 每 5 秒更新一次
+    });
+})();
+
+// 实时区间（定时器）
+(function () {
+    document.addEventListener('DOMContentLoaded', () => {
+
+        // 模拟 API 返回的数据
+        function simulateAPI() {
+            return {
+                // 随机生成各区的 PV、SV、输出和时间数据
+                upPV: Math.floor(Math.random() * (50 - 20 + 1)) + 20,  // 随机生成 20~50 之间的温度
+                upSV: Math.floor(Math.random() * (50 - 30 + 1)) + 30,  // 随机生成 30~50 之间的温度
+                upOutput: Math.floor(Math.random() * 100),  // 随机生成 0~100 之间的输出百分比
+                upTime: Math.floor(Math.random() * (20 - 10 + 1)) + 10,  // 随机生成 10~20 之间的时间（分钟）
+
+                midPV: Math.floor(Math.random() * (40 - 10 + 1)) + 10,  // 随机生成 10~40 之间的温度
+                midSV: Math.floor(Math.random() * (40 - 20 + 1)) + 20,  // 随机生成 20~40 之间的温度
+                midOutput: Math.floor(Math.random() * 100),  // 随机生成 0~100 之间的输出百分比
+                midTime: Math.floor(Math.random() * (20 - 10 + 1)) + 10,  // 随机生成 10~20 之间的时间（分钟）
+
+                downPV: Math.floor(Math.random() * (50 - 30 + 1)) + 30,  // 随机生成 30~50 之间的温度
+                downSV: Math.floor(Math.random() * (50 - 40 + 1)) + 40,  // 随机生成 40~50 之间的温度
+                downOutput: Math.floor(Math.random() * 100),  // 随机生成 0~100 之间的输出百分比
+                downTime: Math.floor(Math.random() * (20 - 10 + 1)) + 10,  // 随机生成 10~20 之间的时间（分钟）
+            };
+        }
+
+        // 更新页面中的数据
+        function updateData(data) {
+            // 更新上区
+            document.getElementById('upPV').innerHTML = `${data.upPV} <small>℃</small>`;
+            document.getElementById('upSV').innerHTML = `${data.upSV} <small>℃</small>`;
+            document.getElementById('upOutput').innerHTML = `${data.upOutput} <small>%</small>`;
+            document.getElementById('upTime').innerHTML = `${data.upTime} <small>分钟</small>`;
+
+            // 更新中区
+            document.getElementById('midPV').innerHTML = `${data.midPV} <small>℃</small>`;
+            document.getElementById('midSV').innerHTML = `${data.midSV} <small>℃</small>`;
+            document.getElementById('midOutput').innerHTML = `${data.midOutput} <small>%</small>`;
+            document.getElementById('midTime').innerHTML = `${data.midTime} <small>分钟</small>`;
+
+            // 更新下区
+            document.getElementById('downPV').innerHTML = `${data.downPV} <small>℃</small>`;
+            document.getElementById('downSV').innerHTML = `${data.downSV} <small>℃</small>`;
+            document.getElementById('downOutput').innerHTML = `${data.downOutput} <small>%</small>`;
+            document.getElementById('downTime').innerHTML = `${data.downTime} <small>分钟</small>`;
+        }
+
+        // 每 5 秒钟模拟一次 API 调用并更新数据
+        setInterval(() => {
+            const newData = simulateAPI();  // 获取新的数据
+            updateData(newData);  // 更新页面上的显示
+        }, 1000);  // 每 5 秒更新一次
+    });
+})();
+
+// 温度折线图（定时器）
 (function () {
     // 配置温度折线图的选项
     var option = {
@@ -158,7 +289,7 @@
     }, 1000);  // 每隔1秒更新一次数据
 })();
 
-// 上区、中区、下区温度趋势
+// 上区、中区、下区温度折线图（定时器）
 (function () {
     // 配置区域温度趋势图的选项
     var option = {
@@ -167,7 +298,7 @@
         },
         xAxis: {
             type: 'category',
-            data: ['30分', '60分', '90分', '120分', '150分', '180分', '210分', '240分', '270分', '300分', '330分', '360分'], // X轴的数据（时间）
+            data: [],  // 初始化为空，数据将动态更新
             axisTick: {
                 show: false  // 不显示刻度线
             },
@@ -237,12 +368,37 @@
     var myechart = echarts.init($('.line')[1]);  // 获取第二个图表容器并初始化图表
     myechart.setOption(option);  // 设置图表的配置项
 
-    // 不同区域的温度数据
+    // 模拟的实时数据生成（每个区域的温度变化）
+    var time = 0;  // 时间（单位：秒）
     var data = {
         quarter: [228, 276, 265, 239, 223, 274, 255, 221, 267, 245, 237, 243],
         month: [266, 235, 210, 253, 271, 234, 229, 267, 280, 259, 218, 237],
         week: [271, 227, 252, 268, 230, 284, 239, 274, 242, 269, 230, 268]
     };
+
+    // 模拟的温度数据生成函数（模拟实时获取数据）
+    function getRealTimeData() {
+        var selectedData = data['quarter'];  // 默认获取quarter数据（可以动态更换为其他区域数据）
+        return selectedData[Math.floor(Math.random() * selectedData.length)];  // 随机选择一个温度数据
+    }
+
+    // 每隔1秒更新一次图表
+    setInterval(function () {
+        // 获取新的数据
+        var newData = getRealTimeData();
+        var newTime = (time++ * 30) + "分";  // 模拟每隔30分钟更新一次时间
+        option.xAxis.data.push(newTime);  // 更新X轴数据（时间）
+        option.series[0].data.push(newData);  // 更新Y轴数据（温度）
+
+        // 保证图表显示的时间不会超过60个数据点
+        if (option.xAxis.data.length > 30) {
+            option.xAxis.data.shift();  // 删除最早的时间数据
+            option.series[0].data.shift();  // 删除最早的温度数据
+        }
+
+        // 更新图表
+        myechart.setOption(option);
+    }, 1000);  // 每秒更新一次数据
 
     // 选项卡点击事件处理
     $('.Area').on('click', '.caption a', function () {
@@ -263,7 +419,7 @@
         $('.Area .caption a').eq(index).click();
     }, 6000);
 
-    // Trigger the first tab click to display the first data set on page load
+    // 页面加载时触发第一个选项卡的点击事件
     $('.Area .caption a').first().click();
 })();
 
