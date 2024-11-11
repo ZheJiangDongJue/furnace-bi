@@ -50,215 +50,224 @@
         $(dom).append(rows);
     });
 })();
-//温度折线图
+
+// 温度折线图
 (function () {
+    // 配置温度折线图的选项
     var option = {
-        //鼠标提示工具
         tooltip: {
-            trigger: 'axis'
+            trigger: 'axis'  // 鼠标悬浮时显示提示框
         },
         xAxis: {
-            // 类目类型
             type: 'category',
-            // x轴刻度文字
-            data: ['1月', '2月', '3月', '4月', '5月', '6月', '7月', '8月', '9月', '10月', '11月', '12月'],
+            data: [],  // 初始化为空，数据将动态更新
             axisTick: {
-                show: false//去除刻度线
+                show: false  // 不显示刻度线
             },
             axisLabel: {
-                color: '#4c9bfd'//文本颜色
+                color: '#4c9bfd'  // X轴标签的颜色
             },
             axisLine: {
-                show: false//去除轴线
+                show: false  // 不显示X轴的轴线
             },
-            boundaryGap: false//去除轴内间距
+            boundaryGap: false  // 不留白
         },
         yAxis: {
-            // 数据作为刻度文字
-            type: 'value',
+            type: 'value',  // Y轴显示数值
             axisTick: {
-                show: false//去除刻度线
+                show: false  // 不显示刻度线
             },
             axisLabel: {
-                color: '#4c9bfd'//文本颜色
+                color: '#4c9bfd'  // Y轴标签的颜色
             },
             axisLine: {
-                show: false//去除轴线
+                show: false  // 不显示Y轴的轴线
             },
-            boundaryGap: false//去除轴内间距
+            boundaryGap: false  // 不留白
         },
-        //图例组件
         legend: {
             textStyle: {
-                color: '#4c9bfd' // 图例文字颜色
-
+                color: '#4c9bfd'  // 图例的文本颜色
             },
-            right: '10%'//距离右边10%
+            right: '10%'  // 图例位置在右侧
         },
-        // 设置网格样式
         grid: {
-            show: true,// 显示边框
-            top: '20%',
-            left: '3%',
-            right: '4%',
-            bottom: '3%',
-            borderColor: '#012f4a',// 边框颜色
-            containLabel: true // 包含刻度文字在内
+            show: true,  // 显示网格
+            top: '20%',  // 上边距
+            left: '3%',  // 左边距
+            right: '4%',  // 右边距
+            bottom: '3%',  // 下边距
+            borderColor: '#012f4a',  // 网格边框颜色
+            containLabel: true  // 包含标签
         },
         series: [{
-            name: '上区',
-            // 数据
-            data: [24, 40, 101, 134, 90, 230, 210, 230, 120, 230, 210, 120],
-            // 图表类型
-            type: 'line',
-            // 圆滑连接
-            smooth: true,
+            name: '区间温度',  // 系列名称
+            data: [],  // 数据数组，默认空
+            type: 'line',  // 图表类型为折线图
+            smooth: true,  // 平滑曲线
             itemStyle: {
-                color: '#00f2f1'  // 线颜色
-            }
-        },
-        {
-            name: '中区',
-            // 数据
-            data: [40, 64, 191, 324, 290, 330, 310, 213, 180, 200, 180, 79],
-            // 图表类型
-            type: 'line',
-            // 圆滑连接
-            smooth: true,
-            itemStyle: {
-                color: '#ed3f35'  // 线颜色
+                color: '#0047f8'  // 数据点的颜色
+            },
+            markPoint: {
+                data: [
+                    { type: 'max', name: 'Max' },  // 最大值标记
+                    { type: 'min', name: 'Min' }   // 最小值标记
+                ]
+            },
+            markLine: {
+                data: [
+                    { type: 'average', name: 'Avg' }  // 平均值标记
+                ]
+            },
+            label: {
+                show: true,  // 显示数据点的标签
+                position: 'top',  // 标签位置在数据点上方
+                color: '#0047f8'  // 标签的颜色
             }
         }]
     };
-    var myechart = echarts.init($('.line')[0]);
-    myechart.setOption(option);
 
-    //点击效果
-    var data = {
-        year: [
-            [24, 40, 101, 134, 90, 230, 210, 230, 120, 230, 210, 120],
-            [40, 64, 191, 324, 290, 330, 310, 213, 180, 200, 180, 79]
-        ],
-        quarter: [
-            [23, 75, 12, 97, 21, 67, 98, 21, 43, 64, 76, 38],
-            [43, 31, 65, 23, 78, 21, 82, 64, 43, 60, 19, 34]
-        ],
-        month: [
-            [34, 87, 32, 76, 98, 12, 32, 87, 39, 36, 29, 36],
-            [56, 43, 98, 21, 56, 87, 43, 12, 43, 54, 12, 98]
-        ],
-        week: [
-            [43, 73, 62, 54, 91, 54, 84, 43, 86, 43, 54, 53],
-            [32, 54, 34, 87, 32, 45, 62, 68, 93, 54, 54, 24]
-        ]
+    var myechart = echarts.init($('.line')[0]);  // 获取第一个图表容器并初始化图表
+    myechart.setOption(option);  // 设置图表的配置项
+
+    // 初始化时间和数据（模拟实时数据）
+    var time = 0;  // 时间（单位：秒）
+    var data = [];  // 实时数据数组
+
+    // 模拟的温度数据生成函数（你可以将此部分替换为真实的温度数据）
+    function getRealTimeData() {
+        var newData = Math.floor(Math.random() * 100);  // 模拟一个温度数据
+        var newTime = (time++ * 30) + "分";  // 模拟每隔30分钟更新一次时间
+        return { time: newTime, value: newData };  // 返回一个新的时间和温度值
     }
-    $('.sales ').on('click', '.caption a', function () {
-        $(this).addClass('active').siblings('a').removeClass('active');
-        //option series   data
-        //获取自定义属性值
-        var key = $(this).attr('data-type');
-        //取出对应的值
-        key = data[key];
-        //将值设置到 图表中
-        option.series[0].data = key[0];
-        option.series[1].data = key[1];
-        //再次调用才能在页面显示
+
+    // 每隔1秒获取一次数据并更新图表
+    setInterval(function () {
+        var newData = getRealTimeData();  // 获取新的数据点
+        option.xAxis.data.push(newData.time);  // 更新X轴数据（时间）
+        option.series[0].data.push(newData.value);  // 更新Y轴数据（温度）
+
+        // 保证图表显示的时间不会超过60个数据点
+        if (option.xAxis.data.length > 30) {
+            option.xAxis.data.shift();  // 删除最早的时间数据
+            option.series[0].data.shift();  // 删除最早的温度数据
+        }
+
+        // 更新图表
         myechart.setOption(option);
-    });
-    //定时器
-    var index = 0;
-    var timer = setInterval(function () {
-        index++;
-        if (index > 4) {
-            index = 0;
-        };
-        $('.sales .caption a').eq(index).click();
-    }, 2000);
+    }, 1000);  // 每隔1秒更新一次数据
 })();
-// 铜价折线图
+
+// 上区、中区、下区温度趋势
 (function () {
+    // 配置区域温度趋势图的选项
     var option = {
         tooltip: {
-            trigger: 'axis'
+            trigger: 'axis'  // 鼠标悬浮时显示提示框
         },
         xAxis: {
             type: 'category',
-            boundaryGap: false,
-            data: [
-                '2024.10.11', '2024.10.12', '2024.10.13', '2024.10.14',
-                '2024.10.15', '2024.10.16', '2024.10.17'
-            ],
+            data: ['30分', '60分', '90分', '120分', '150分', '180分', '210分', '240分', '270分', '300分', '330分', '360分'], // X轴的数据（时间）
             axisTick: {
-                show: false // 去除刻度线
+                show: false  // 不显示刻度线
             },
             axisLabel: {
-                color: '#4c9bfd' // 文本颜色
+                color: '#4c9bfd'  // X轴标签的颜色
             },
             axisLine: {
-                show: false // 去除轴线
-            }
+                show: false  // 不显示X轴的轴线
+            },
+            boundaryGap: false  // 不留白
         },
         yAxis: {
-            type: 'value',
-            axisLabel: {
-                formatter: '{value} °C',
-                color: '#4c9bfd' // 文本颜色
-            },
+            type: 'value',  // Y轴显示数值
             axisTick: {
-                show: false // 去除刻度线
+                show: false  // 不显示刻度线
+            },
+            axisLabel: {
+                color: '#4c9bfd'  // Y轴标签的颜色
             },
             axisLine: {
-                show: false // 去除轴线
-            }
+                show: false  // 不显示Y轴的轴线
+            },
+            boundaryGap: false  // 不留白
         },
         legend: {
             textStyle: {
-                color: '#4c9bfd' // 图例文字颜色
+                color: '#4c9bfd'  // 图例的文本颜色
             },
-            right: '10%' // 距离右边10%
+            right: '10%'  // 图例位置在右侧
         },
         grid: {
-            show: true, // 显示边框
-            top: '20%',
-            left: '3%',
-            right: '4%',
-            bottom: '3%',
-            borderColor: '#012f4a', // 边框颜色
-            containLabel: true // 包含刻度文字在内
+            show: true,  // 显示网格
+            top: '20%',  // 上边距
+            left: '3%',  // 左边距
+            right: '4%',  // 右边距
+            bottom: '3%',  // 下边距
+            borderColor: '#012f4a',  // 网格边框颜色
+            containLabel: true  // 包含标签
         },
-        series: [
-            {
-                name: '铜价',
-                type: 'line',
-                data: [10, 11, 13, 11, 12, 12, 9], // 初始数据
-                smooth: true,
-                itemStyle: {
-                    color: '#0047f8'  // 线颜色
-                },
-                markPoint: {
-                    data: [
-                        { type: 'max', name: 'Max' },
-                        { type: 'min', name: 'Min' }
-                    ]
-                },
-                markLine: {
-                    data: [
-                        { type: 'average', name: 'Avg' }
-                    ]
-                },
-                label: {
-                    show: true,
-                    position: 'top', // 可以调整位置，如'inside' 或 'top'
-                    color: '#0047f8'  // 文字颜色
-                }
+        series: [{
+            name: '区间温度',  // 系列名称
+            data: [],  // 数据数组，默认空
+            type: 'line',  // 图表类型为折线图
+            smooth: true,  // 平滑曲线
+            itemStyle: {
+                color: '#0047f8'  // 数据点的颜色
+            },
+            markPoint: {
+                data: [
+                    { type: 'max', name: 'Max' },  // 最大值标记
+                    { type: 'min', name: 'Min' }   // 最小值标记
+                ]
+            },
+            markLine: {
+                data: [
+                    { type: 'average', name: 'Avg' }  // 平均值标记
+                ]
+            },
+            label: {
+                show: true,  // 显示数据点的标签
+                position: 'top',  // 标签位置在数据点上方
+                color: '#0047f8'  // 标签的颜色
             }
-        ]
+        }]
     };
 
-    var myechart = echarts.init($('.PriceCopper')[0]);
-    myechart.setOption(option);
+    var myechart = echarts.init($('.line')[1]);  // 获取第二个图表容器并初始化图表
+    myechart.setOption(option);  // 设置图表的配置项
+
+    // 不同区域的温度数据
+    var data = {
+        quarter: [228, 276, 265, 239, 223, 274, 255, 221, 267, 245, 237, 243],
+        month: [266, 235, 210, 253, 271, 234, 229, 267, 280, 259, 218, 237],
+        week: [271, 227, 252, 268, 230, 284, 239, 274, 242, 269, 230, 268]
+    };
+
+    // 选项卡点击事件处理
+    $('.Area').on('click', '.caption a', function () {
+        $(this).addClass('active').siblings('a').removeClass('active');  // 切换选项卡的激活状态
+        var key = $(this).attr('data-type');  // 获取当前点击的选项卡类型
+        var selectedData = data[key];  // 获取对应的数据
+        option.series[0].data = selectedData;  // 更新图表数据
+        myechart.setOption(option);  // 更新图表显示
+    });
+
+    // 每隔6秒自动切换选项卡
+    var index = 0;
+    var timer = setInterval(function () {
+        index++;
+        if (index >= $('.Area .caption a').length) {
+            index = 0;
+        }
+        $('.Area .caption a').eq(index).click();
+    }, 6000);
+
+    // Trigger the first tab click to display the first data set on page load
+    $('.Area .caption a').first().click();
 })();
-//炉膛温度图列
+
+// 炉膛温度图列
 (function () {
     var option = {
         series: [
@@ -299,7 +308,7 @@
     myechart.setOption(option);
 })();
 
-//炉膛温度
+//炉膛温度API
 function ajax(type, url, params, callback) {
     // 创建ajax引擎对象
     let xhr = new XMLHttpRequest();

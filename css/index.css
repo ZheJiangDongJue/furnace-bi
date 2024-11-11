@@ -1,3 +1,4 @@
+/*通用*/
 body{
     line-height: 1.15;
     font-size: 0.5rem;
@@ -18,7 +19,6 @@ a{
     text-decoration: none;
 }
 .viewport {
-    /* 限定大小 */
     min-width: 1024px;
     max-width: 1920px;
     min-height: 780px;
@@ -27,8 +27,13 @@ a{
     display: flex;
     padding: 3.667rem 0.833rem 0;
 }
+/*图标大小*/
+.icon-plane {
+  font-size: 20px;  /* 图标大小 */
+}
 
-  .column{
+/*基础布局*/
+.column{
     flex: 3;
     position: relative;
 }
@@ -36,9 +41,6 @@ a{
     flex: 4;
     margin: 1.333rem 0.833rem 0;
 }
-
-
-
 .panel {
     /* 边框 */
     box-sizing: border-box;
@@ -48,9 +50,6 @@ a{
     position: relative;
     margin-bottom: 0.833rem;
 }
-
-
-
 .panel .inner {
     /* 装内容 */
     position: absolute;
@@ -64,57 +63,38 @@ a{
     font-size: 0.833rem;
     color: #fff;
 }
-/* 概览区域 */
-.overview{
-    height: 4.583rem;
-  }
-  .overview .inner{
-    display: flex;
-    justify-content: space-between;
-  }
-  .overview h4{
-    font-size: 1.167rem;
-    padding-left: 0.2rem;
-    color: #fff;
-    margin-bottom: 0.333rem
-  }
-  .overview span{
-    font-size: 0.667rem;
-    color: #4c9bfd;
-}
+
 /* 生产实时明细 */
 .monitor{
 	height: 36rem;
   }
-  .monitor .inner{
+.monitor .inner{
 	padding: 1rem 0;
 	display: flex;
 	flex-direction: column;
   }
-  .monitor .tabs{
+.monitor .tabs{
 	padding: 0 1.5rem;
 	margin-bottom: 0.75rem;
   }
-  .monitor .tabs a{
+.monitor .tabs a{
 	color: #1950c4;
 	font-size: 0.75rem;
 	padding: 0 1.125rem;
   }
-  
-  .monitor .tabs a:first-child{
+.monitor .tabs a:first-child{
 	border-right: 0.083rem solid #00f2f1;
 	padding-left: 0;
   }
-  
-  .monitor .tabs a.active{
+.monitor .tabs a.active{
 	color: #fff;
   }
-  .monitor .content{
+.monitor .content{
 	flex: 1;
 	display: none;
 	position: relative;
   }
-  .monitor .head{
+.monitor .head{
 	background: rgba(255, 255, 255, 0.1);
 	font-size: 0.583rem;
 	padding: 0.5rem 1.5rem;
@@ -123,33 +103,32 @@ a{
 	justify-content: space-between;
 	line-height: 1.05;
   }
-  .monitor .col:nth-child(1) {
+.monitor .col:nth-child(1) {
 	width: 3.2rem;
   }
-  .monitor .col:nth-child(2) {
+.monitor .col:nth-child(2) {
 	width: 2.5rem;
   }
-  .monitor .col:nth-child(3) {
+.monitor .col:nth-child(3) {
 	width: 4.8rem;
     text-align: center;
   }
-  .monitor .col:nth-child(4) {
+.monitor .col:nth-child(4) {
 	width: 3.2rem;
   }
-  .monitor .col:nth-child(5) {
+.monitor .col:nth-child(5) {
 	width: 3.2rem;
   }
-  .monitor .col:nth-child(6) {
+.monitor .col:nth-child(6) {
 	width: 3.2rem;
   }
-  .monitor .marquee-view{
+.monitor .marquee-view{
   position: absolute;
   top: 1.6rem;
   bottom: 0; 
   width: 100%; 
   overflow: hidden;
 }
-
 .monitor .row{
   line-height: 1.05;
   padding: 0.5rem 1.5rem;
@@ -166,7 +145,6 @@ a{
 .monitor .row:hover .icon-dot{
   opacity: 1;
 }
-
 .monitor .icon-dot{
   position: absolute;
   left: 0.64rem;
@@ -179,8 +157,7 @@ a{
 	width: 100%; 
 	overflow: hidden;
   }
-  
-  .monitor .row{
+.monitor .row{
 	line-height: 1.05;
 	padding: 0.5rem 1.5rem;
 	color: #61a8ff;
@@ -189,21 +166,20 @@ a{
 	display: flex;
 	justify-content: space-between;
   }
-  .monitor .row:hover{
+.monitor .row:hover{
 	color:#68d8ff;
 	background: rgba(255, 255, 255, 0.1);
   }
-  .monitor .row:hover .icon-dot{
+.monitor .row:hover .icon-dot{
 	opacity: 1;
   }
-  
-  .monitor .icon-dot{
+.monitor .icon-dot{
 	position: absolute;
 	left: 0.64rem;
 	opacity: 0;
 }
 
-/* 尾部 */
+/* 尾部图片 */
 .button {
   position: fixed;
   bottom: 0;
@@ -219,9 +195,7 @@ a{
   pointer-events: none;  /* 避免点击事件干扰页面其他元素 */
 }
 
-
-
-/* ------------------------------------------------------------动画 */
+/* 动画 */
 @keyframes row{
   0%{}
   100%{
@@ -237,11 +211,11 @@ a{
 .monitor .marquee:hover {
   animation-play-state: paused;
 }
-/* 设备信息 */
+
+/* 设备区块信息 */
 .point {
   height: 8rem;
 }
-
 .point .chart {
   display: flex;
   margin-top: 1rem;
@@ -273,52 +247,14 @@ a{
   font-size: 0.667rem;
 }
 
-/* 订单 */
-.order {
-  height: 6.167rem;
+/* 中间区域权重 */
+.sales, .Area {
+  flex: 1;
+  height: 16rem;
 }
-.order .filter {
-  display: flex;
-}
-.order .filter a {
-  display: block;
-  height: 0.75rem;
-  line-height: 1;
-  padding: 0 0.75rem;
-  color: #1950c4;
-  font-size: 0.75rem;
-  border-right: 0.083rem solid #00f2f1;
-}
-.order .filter a:first-child {
-  padding-left: 0;
-}
-.order .filter a:last-child {
-  border-right: none;
-}
-.order .filter a.active {
-  color: #fff;
-  font-size: 0.833rem;
-}
-.order .data {
-  display: flex;
-  margin-top: 0.833rem;
-}
-.order .item {
-  width: 50%;
-}
-.order h4 {
-  font-size: 1.167rem;
-  color: #fff;
-  margin-bottom: 0.417rem;
-}
-.order span {
-  display: block;
-  color: #4c9bfd;
-  font-size: 0.667rem;
-}
-/* 销售区域 */
+
+/* 炉膛温度折线图 */
 .sales {
-  height: 20rem;
 }
 .sales .caption {
   display: flex;
@@ -360,44 +296,114 @@ a{
   width: 100%;
   height: 100%;
 }
-/* 渠道区块 */
+
+/* 区域温度折线图 */
+.Area{
+}
+.Area .caption {
+  display: flex;
+  line-height: 1;
+}
+.Area h3 {
+  height: 0.75rem;
+  padding-right: 0.75rem;
+  border-right: 0.083rem solid #00f2f1;
+}
+.Area a {
+  padding: 0.167rem;
+  font-size: 0.667rem;
+  margin: -0.125rem 0 0 0.875rem;
+  border-radius: 0.125rem;
+  color: #0bace6;
+}
+.Area a.active {
+  background-color: #4c9bfd;
+  color: #fff;
+}
+.Area .inner {
+  display: flex;
+  flex-direction: column;
+}
+.Area .chart {
+  flex: 1;
+  padding-top: 0.6rem;
+  position: relative;
+}
+.Area .label {
+  position: absolute;
+  left: 1.75rem;
+  top: 0.75rem;
+  color: #4996f5;
+  font-size: 0.583rem;
+}
+.Area .line {
+  width: 100%;
+  height: 100%;
+}
+
+
+/* 区块状态*/
 .wrap {
   display: flex;
 }
 .channel,
 .quarter {
   flex: 1;
-  height: 9.667rem;
+  height: 11rem;
 }
 .channel {
   margin-right: 0.833rem;
+  justify-content: space-between;
 }
 .channel .data {
   overflow: hidden;
 }
 .channel .item {
-  margin-top: 0.85rem;
+  display: flex;
+  justify-content: space-between; /* 横向两者占据空间 */
+  align-items: center;  /* 垂直居中对齐 */
+  padding: 10px;
 }
-.channel .item:first-child {
-  float: left;
+.channel .item-border {
+  width: 70%;
+  height: 1px;
+  background-color: rgba(255, 255, 255, 0.4);
+  margin-left: 15%;
 }
-.channel .item:last-child {
-  float: right;
+.channel .item h4,
+.channel .item span {
+  flex: 1;
+  text-align: left;
+  display: flex;
+  align-items: center;
+  gap: 8px;  /* 图标与文本之间的间隔 */
+}
+.channel .item h4 {
+  margin: 0;
+  flex: 0 0 auto; /* h4 占据最小空间，不会拉伸 */
 }
 .channel h4 {
   color: #fff;
-  font-size: 1rem;
+  font-size: 0.6rem;
   margin-bottom: 0.2rem;
-}
-.channel small {
-  font-size: 50%;
 }
 .channel span {
   display: block;
   color: #4c9bfd;
-  font-size: 0.583rem;
+  font-size: 0.6rem;
 }
-/* 季度区块 */
+.channel small {
+  font-size: 50%;
+}
+.channel .chart {
+  font-size: 50%;
+  display: flex;
+  flex-direction: column;  /* 纵向排列 .item 元素 */
+  gap: 20px;  /* 间距 */
+}
+
+
+/* 炉膛温度 */
 .quarter .inner {
   display: flex;
   flex-direction: column;
