@@ -287,6 +287,11 @@
         // 更新图表
         myechart.setOption(option);
     }, 1000);  // 每隔1秒更新一次数据
+
+    // 监听窗口大小变化，自动调整图表尺寸
+    window.addEventListener('resize', function () {
+        myechart.resize();  // 调整图表大小
+    });
 })();
 
 // 上区、中区、下区温度折线图（定时器）
@@ -409,8 +414,12 @@
 
     // 页面加载时触发第一个选项卡的点击事件
     $('.Area .caption a').first().click();
-})();
 
+    // 监听窗口大小变化，自动调整图表尺寸
+    window.addEventListener('resize', function () {
+        myechart.resize();  // 调整图表大小
+    });
+})();
 
 // 炉膛温度图列
 (function () {
@@ -451,6 +460,11 @@
     };
     var myechart = echarts.init($('.gauge')[0]);
     myechart.setOption(option);
+
+    // 监听窗口大小变化，自动调整图表尺寸
+    window.addEventListener('resize', function () {
+        myechart.resize();  // 调整图表大小
+    });
 })();
 
 //炉膛温度API

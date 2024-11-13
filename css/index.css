@@ -18,10 +18,11 @@ ul{
 a{
     text-decoration: none;
 }
+/*头部图片*/
 .viewport {
-    min-width: 1024px;
-    max-width: 1920px;
-    min-height: 780px;
+    /*min-width: 1024px;*/
+    /*max-width: 1920px;*/
+    /*min-height: 780px;*/
     margin: 0 auto;
     background: url(../images/logo.png) no-repeat 0 0 / contain;
     display: flex;
@@ -31,7 +32,6 @@ a{
 .icon-plane {
   font-size: 20px;  /* 图标大小 */
 }
-
 /*基础布局*/
 .column{
     flex: 3;
@@ -77,27 +77,6 @@ a{
 	padding: 0 1.5rem;
 	margin-bottom: 0.75rem;
   }
-
-.tabs select {
-  background-color: transparent;
-  border: none;
-  color: #fff;
-  font-size: 0.5rem;
-  margin-bottom: 0.1rem;
-  padding: 0.3rem;
-  appearance: none; /* 去掉默认箭头图标 */
-}
-
-.tabs select option {
-  background-color: transparent !important; /* 确保选项背景透明 */
-  color: #090000; /* 设置选项文字颜色 */
-}
-
-.tabs select:focus {
-  outline: none; /* 去掉焦点边框 */
-}
-
-
 .monitor .tabs a{
 	color: #1950c4;
 	font-size: 0.75rem;
@@ -125,23 +104,34 @@ a{
 	line-height: 1.05;
   }
 .monitor .col:nth-child(1) {
-	width: 3.2rem;
+  width: 3.2rem;
+  justify-content: center; /* 水平居中对齐 */
+  align-items: center; /* 垂直居中对齐 */
+  text-align: center;
   }
 .monitor .col:nth-child(2) {
-	width: 2.5rem;
+  width: 2.5rem;
+  justify-content: center; /* 水平居中对齐 */
+  align-items: center; /* 垂直居中对齐 */
+  text-align: center;
   }
 .monitor .col:nth-child(3) {
-	width: 4.8rem;
-    text-align: center;
+  width: 4.8rem;
+  justify-content: center; /* 水平居中对齐 */
+  align-items: center; /* 垂直居中对齐 */
+  text-align: center;
   }
 .monitor .col:nth-child(4) {
-	width: 3.2rem;
+  width: 3.2rem;
+  justify-content: center; /* 水平居中对齐 */
+  align-items: center; /* 垂直居中对齐 */
+  text-align: center;
   }
 .monitor .col:nth-child(5) {
-	width: 3.2rem;
-  }
-.monitor .col:nth-child(6) {
-	width: 3.2rem;
+  width: 3.2rem;
+  justify-content: center; /* 水平居中对齐 */
+  align-items: center; /* 垂直居中对齐 */
+  text-align: center;
   }
 .monitor .marquee-view{
   position: absolute;
@@ -200,21 +190,6 @@ a{
 	opacity: 0;
 }
 
-/* 尾部图片 */
-.button {
-  position: fixed;
-  bottom: 0;
-  left: 0;
-  right: 0;
-  min-width: 1024px;
-  max-width: 1920px;
-  min-height: 780px;
-  width: 100%;
-  background: url(../images/new.png) no-repeat center bottom / contain;
-  padding: 0 0.833rem 3.667rem;
-  z-index: 1000;  /* 确保该元素在页面最前面 */
-  pointer-events: none;  /* 避免点击事件干扰页面其他元素 */
-}
 
 /* 动画 */
 @keyframes row{
@@ -271,7 +246,7 @@ a{
 /* 中间区域权重 */
 .sales, .Area {
   flex: 1;
-  height: 16rem;
+  height: 18rem;
 }
 
 /* 炉膛温度折线图 */
@@ -358,7 +333,6 @@ a{
   height: 100%;
 }
 
-
 /* 区块状态*/
 .wrap {
   display: flex;
@@ -416,14 +390,10 @@ a{
   font-size: 50%;
   display: flex;
   flex-direction: column;  /* 纵向排列 .item 元素 */
-  gap: 20px;  /* 间距 */
+  gap: 10px;  /* 间距 */
 }
 
-
 /* 炉膛温度 */
-
-
-
 .quarter .inner {
   display: flex;
   flex-direction: column;
@@ -473,6 +443,27 @@ a{
   font-size: 0.583rem;
 }
 
+/*尾部图片*/
+.button {
+  background: url(../images/new.png) no-repeat center bottom;
+  background-size: 100% auto; /* 宽度铺满，高度自适应 */
+  position: fixed; /* 保持按钮固定在页面底部 */
+  bottom: 0;
+  left: 0;
+  width: 100vw; /* 铺满屏幕宽度 */
+  height: 10vh; /* 设置高度，可根据需要调整 */
+  display: flex; /* 使用 flexbox 布局 */
+  justify-content: center; /* 水平居中 */
+  align-items: center; /* 垂直居中 */
+}
+.button .center-text {
+  color: white; /* 设置文字颜色 */
+  font-size: 1rem; /* 根据需要调整字体大小 */
+  font-weight: bold; /* 设置字体加粗 */
+  text-align: center; /* 居中对齐文本 */
+  text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.5); /* 增加阴影以提升可读性 */
+  /*letter-spacing: 0.5em; !* 设置字母间距 *!*/
+}
 
 .clock {
   position: absolute;

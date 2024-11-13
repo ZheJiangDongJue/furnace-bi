@@ -84,23 +84,23 @@
                         <div class="item">
                             <h4 id="upPV">32 <small>℃</small></h4> <!-- 用 id 来动态更新 -->
                             <span>
-                    <i class="icon-plane"></i>
-                    PV
-                </span>
+                            <i class="icon-plane"></i>
+                            实际温度
+                            </span>
                         </div>
                         <div class="item">
                             <h4 id="upSV">45 <small>℃</small></h4> <!-- 用 id 来动态更新 -->
                             <span>
-                    <i class="icon-plane"></i>
-                    SV
-                </span>
+                                <i class="icon-plane"></i>
+                                程序设定温度
+                            </span>
                         </div>
                         <div class="item">
                             <h4 id="upOutput">12 <small>%</small></h4> <!-- 用 id 来动态更新 -->
                             <span>
-                    <i class="icon-plane"></i>
-                    输出
-                </span>
+                                <i class="icon-plane"></i>
+                                输出
+                            </span>
                         </div>
                         <div class="item">
                             <h4 id="upTime">12 <small>分钟</small></h4> <!-- 用 id 来动态更新 -->
@@ -120,14 +120,14 @@
                             <h4 id="midPV">19 <small>℃</small></h4> <!-- 用 id 来动态更新 -->
                             <span>
                     <i class="icon-plane"></i>
-                    PV
+                    实际温度
                 </span>
                         </div>
                         <div class="item">
                             <h4 id="midSV">19 <small>℃</small></h4> <!-- 用 id 来动态更新 -->
                             <span>
                     <i class="icon-plane"></i>
-                    SV
+                    程序设定温度
                 </span>
                         </div>
                         <div class="item">
@@ -155,14 +155,14 @@
                             <h4 id="downPV">39 <small>℃</small></h4> <!-- 用 id 来动态更新 -->
                             <span>
                     <i class="icon-plane"></i>
-                    PV
+                    实际温度
                 </span>
                         </div>
                         <div class="item">
                             <h4 id="downSV">39 <small>℃</small></h4> <!-- 用 id 来动态更新 -->
                             <span>
                     <i class="icon-plane"></i>
-                    SV
+                    程序设定温度
                 </span>
                         </div>
                         <div class="item">
@@ -189,19 +189,13 @@
             <div class="monitor panel">
                 <div class="inner">
                     <div class="tabs">
-                        <select id="dropdown" data-index="0">
-                            <option value="0" selected>生产实时明细</option>
-                            <!-- 可以添加更多选项 -->
-                            <option value="1">选项 1</option>
-                            <option value="2">选项 2</option>
-                        </select>
+                        <a href="javascript:;" data-index="0" class="active">生产实时明细</a>
                     </div>
                     <div class="content" style="display: block;">
                         <div class="head">
                             <span class="col">物料编码</span>
                             <span class="col">物料名称</span>
                             <span class="col">规格型号</span>
-                            <span class="col">设备编号</span>
                             <span class="col">设备名称</span>
                             <span class="col">状态</span>
                         </div>
@@ -211,7 +205,6 @@
                                     <span class="col">2001M0018</span>
                                     <span class="col">绞线</span>
                                     <span class="col">63/0.1mm(正绞)</span>
-                                    <span class="col">DJ0001</span>
                                     <span class="col">退火炉</span>
                                     <span class="col">执行中</span>
                                     <span class="icon-dot"></span>
@@ -220,7 +213,6 @@
                                     <span class="col">2001M0018</span>
                                     <span class="col">绞线</span>
                                     <span class="col">63/0.1mm(正绞)</span>
-                                    <span class="col">DJ0001</span>
                                     <span class="col">退火炉</span>
                                     <span class="col">执行中</span>
                                     <span class="icon-dot"></span>
@@ -229,7 +221,6 @@
                                     <span class="col">2001M0018</span>
                                     <span class="col">绞线</span>
                                     <span class="col">63/0.1mm(正绞)</span>
-                                    <span class="col">DJ0001</span>
                                     <span class="col">退火炉</span>
                                     <span class="col">执行中</span>
                                     <span class="icon-dot"></span>
@@ -238,7 +229,6 @@
                                     <span class="col">2002M0019</span>
                                     <span class="col">电线</span>
                                     <span class="col">50/0.15mm(正绞)</span>
-                                    <span class="col">DJ0002</span>
                                     <span class="col">退火炉</span>
                                     <span class="col">已完成</span>
                                     <span class="icon-dot"></span>
@@ -247,7 +237,6 @@
                                     <span class="col">2003M0020</span>
                                     <span class="col">钢绞线</span>
                                     <span class="col">45/0.2mm(反绞)</span>
-                                    <span class="col">DJ0003</span>
                                     <span class="col">退火炉</span>
                                     <span class="col">待启动</span>
                                     <span class="icon-dot"></span>
@@ -256,7 +245,6 @@
                                     <span class="col">2001M0018</span>
                                     <span class="col">绞线</span>
                                     <span class="col">63/0.1mm(正绞)</span>
-                                    <span class="col">DJ0001</span>
                                     <span class="col">退火炉</span>
                                     <span class="col">执行中</span>
                                     <span class="icon-dot"></span>
@@ -265,7 +253,6 @@
                                     <span class="col">2001M0018</span>
                                     <span class="col">绞线</span>
                                     <span class="col">63/0.1mm(正绞)</span>
-                                    <span class="col">DJ0001</span>
                                     <span class="col">退火炉</span>
                                     <span class="col">执行中</span>
                                     <span class="icon-dot"></span>
@@ -274,7 +261,6 @@
                                     <span class="col">2001M0018</span>
                                     <span class="col">绞线</span>
                                     <span class="col">63/0.1mm(正绞)</span>
-                                    <span class="col">DJ0001</span>
                                     <span class="col">退火炉</span>
                                     <span class="col">执行中</span>
                                     <span class="icon-dot"></span>
@@ -283,7 +269,6 @@
                                     <span class="col">2001M0018</span>
                                     <span class="col">绞线</span>
                                     <span class="col">63/0.1mm(正绞)</span>
-                                    <span class="col">DJ0001</span>
                                     <span class="col">退火炉</span>
                                     <span class="col">执行中</span>
                                     <span class="icon-dot"></span>
@@ -292,7 +277,6 @@
                                     <span class="col">2001M0018</span>
                                     <span class="col">绞线</span>
                                     <span class="col">63/0.1mm(正绞)</span>
-                                    <span class="col">DJ0001</span>
                                     <span class="col">退火炉</span>
                                     <span class="col">执行中</span>
                                     <span class="icon-dot"></span>
@@ -334,10 +318,13 @@
                     </div>
                 </div>
             </div>
-
+        </div>
+        <!--尾部区域-->
+        <div class="button">
+            <h3 class="center-text">浙江东爵线缆欢迎您</h3>
         </div>
     </div>
-    <div class="button"></div>
+
 </body>
 
 <script src="./node_modules/jquery/dist/jquery.min.js"></script>
