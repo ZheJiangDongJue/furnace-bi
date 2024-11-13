@@ -293,125 +293,113 @@
 (function () {
     // 配置区域温度趋势图的选项
     var option = {
-        tooltip: {
-            trigger: 'axis'  // 鼠标悬浮时显示提示框
-        },
+        tooltip: { trigger: 'axis' },
         xAxis: {
             type: 'category',
-            data: [],  // 初始化为空，数据将动态更新
-            axisTick: {
-                show: false  // 不显示刻度线
-            },
-            axisLabel: {
-                color: '#4c9bfd'  // X轴标签的颜色
-            },
-            axisLine: {
-                show: false  // 不显示X轴的轴线
-            },
-            boundaryGap: false  // 不留白
+            data: [],
+            axisTick: { show: false },
+            axisLabel: { color: '#4c9bfd' },
+            axisLine: { show: false },
+            boundaryGap: false
         },
         yAxis: {
-            type: 'value',  // Y轴显示数值
-            axisTick: {
-                show: false  // 不显示刻度线
-            },
-            axisLabel: {
-                color: '#4c9bfd'  // Y轴标签的颜色
-            },
-            axisLine: {
-                show: false  // 不显示Y轴的轴线
-            },
-            boundaryGap: false  // 不留白
+            type: 'value',
+            axisTick: { show: false },
+            axisLabel: { color: '#4c9bfd' },
+            axisLine: { show: false },
+            boundaryGap: false
         },
         legend: {
-            textStyle: {
-                color: '#4c9bfd'  // 图例的文本颜色
-            },
-            right: '10%'  // 图例位置在右侧
+            textStyle: { color: '#4c9bfd' },
+            right: '10%'
         },
         grid: {
-            show: true,  // 显示网格
-            top: '20%',  // 上边距
-            left: '3%',  // 左边距
-            right: '4%',  // 右边距
-            bottom: '3%',  // 下边距
-            borderColor: '#012f4a',  // 网格边框颜色
-            containLabel: true  // 包含标签
+            show: true,
+            top: '20%',
+            left: '3%',
+            right: '4%',
+            bottom: '3%',
+            borderColor: '#012f4a',
+            containLabel: true
         },
         series: [{
-            name: '区间温度',  // 系列名称
-            data: [],  // 数据数组，默认空
-            type: 'line',  // 图表类型为折线图
-            smooth: true,  // 平滑曲线
-            itemStyle: {
-                color: '#0047f8'  // 数据点的颜色
-            },
-            markPoint: {
-                data: [
-                    { type: 'max', name: 'Max' },  // 最大值标记
-                    { type: 'min', name: 'Min' }   // 最小值标记
-                ]
-            },
-            markLine: {
-                data: [
-                    { type: 'average', name: 'Avg' }  // 平均值标记
-                ]
-            },
+            name: '区间温度',
+            data: [],
+            type: 'line',
+            smooth: true,
+            itemStyle: { color: '#0047f8' },
+            markPoint: { data: [{ type: 'max', name: 'Max' }, { type: 'min', name: 'Min' }] },
+            markLine: { data: [{ type: 'average', name: 'Avg' }] },
             label: {
-                show: true,  // 显示数据点的标签
-                position: 'top',  // 标签位置在数据点上方
-                color: '#0047f8'  // 标签的颜色
+                show: true,
+                position: 'top',
+                color: '#0047f8'
             }
         }]
     };
 
-    var myechart = echarts.init($('.line')[1]);  // 获取第二个图表容器并初始化图表
-    myechart.setOption(option);  // 设置图表的配置项
+    var myechart = echarts.init($('.line')[1]);
+    myechart.setOption(option);
 
-    // 模拟的实时数据生成（每个区域的温度变化）
-    var time = 0;  // 时间（单位：秒）
-    var data = {
-        quarter: [228, 276, 265, 239, 223, 274, 255, 221, 267, 245, 237, 243],
-        month: [266, 235, 210, 253, 271, 234, 229, 267, 280, 259, 218, 237],
-        week: [271, 227, 252, 268, 230, 284, 239, 274, 242, 269, 230, 268]
-    };
-
-    // 模拟的温度数据生成函数（模拟实时获取数据）
-    function getRealTimeData() {
-        var selectedData = data['quarter'];  // 默认获取quarter数据（可以动态更换为其他区域数据）
-        return selectedData[Math.floor(Math.random() * selectedData.length)];  // 随机选择一个温度数据
+    // 模拟的温度数据生成函数
+    function getRandomTemperature() {
+        return Math.floor(Math.random() * 11) + 20;
     }
 
-    // 每隔1秒更新一次图表
-    setInterval(function () {
-        // 获取新的数据
-        var newData = getRealTimeData();
-        var newTime = (time++ * 30) + "分";  // 模拟每隔30分钟更新一次时间
-        option.xAxis.data.push(newTime);  // 更新X轴数据（时间）
-        option.series[0].data.push(newData);  // 更新Y轴数据（温度）
+    var maxDataPoints = 30;  // 每个选项卡最大可见数据点
+    var updateInterval = 1000;  // 更新间隔时间
 
-        // 保证图表显示的时间不会超过60个数据点
-        if (option.xAxis.data.length > 30) {
-            option.xAxis.data.shift();  // 删除最早的时间数据
-            option.series[0].data.shift();  // 删除最早的温度数据
+    var data = {
+        quarter: { xData: [], yData: [] },
+        month: { xData: [], yData: [] },
+        week: { xData: [], yData: [] }
+    };
+    var currentTab = 'quarter';
+
+    // 初始化数据
+    for (var i = 0; i < 12; i++) {
+        Object.keys(data).forEach(key => {
+            data[key].xData.push((i * 30) + "分");
+            data[key].yData.push(getRandomTemperature());
+        });
+    }
+
+    // 定时更新当前选项卡数据
+    var time = 12;
+    setInterval(function () {
+        var newData = getRandomTemperature();
+        var newTime = (time++ * 30) + "分";
+
+        data[currentTab].xData.push(newTime);
+        data[currentTab].yData.push(newData);
+
+        // 确保数据不会超过 maxDataPoints
+        if (data[currentTab].xData.length > maxDataPoints) {
+            data[currentTab].xData.shift();
+            data[currentTab].yData.shift();
         }
 
         // 更新图表
+        option.xAxis.data = data[currentTab].xData;
+        option.series[0].data = data[currentTab].yData;
         myechart.setOption(option);
-    }, 1000);  // 每秒更新一次数据
+    }, updateInterval);
 
     // 选项卡点击事件处理
     $('.Area').on('click', '.caption a', function () {
-        $(this).addClass('active').siblings('a').removeClass('active');  // 切换选项卡的激活状态
-        var key = $(this).attr('data-type');  // 获取当前点击的选项卡类型
-        var selectedData = data[key];  // 获取对应的数据
-        option.series[0].data = selectedData;  // 更新图表数据
-        myechart.setOption(option);  // 更新图表显示
+        var $this = $(this);
+        $this.addClass('active').siblings('a').removeClass('active');
+        currentTab = $this.attr('data-type');
+
+        // 切换选项卡时加载对应数据
+        option.xAxis.data = data[currentTab].xData;
+        option.series[0].data = data[currentTab].yData;
+        myechart.setOption(option);
     });
 
     // 每隔6秒自动切换选项卡
     var index = 0;
-    var timer = setInterval(function () {
+    setInterval(function () {
         index++;
         if (index >= $('.Area .caption a').length) {
             index = 0;
@@ -422,6 +410,7 @@
     // 页面加载时触发第一个选项卡的点击事件
     $('.Area .caption a').first().click();
 })();
+
 
 // 炉膛温度图列
 (function () {

@@ -66,7 +66,7 @@ a{
 
 /* 生产实时明细 */
 .monitor{
-	height: 38rem;
+	height: 34rem;
   }
 .monitor .inner{
 	padding: 1rem 0;
@@ -77,6 +77,27 @@ a{
 	padding: 0 1.5rem;
 	margin-bottom: 0.75rem;
   }
+
+.tabs select {
+  background-color: transparent;
+  border: none;
+  color: #fff;
+  font-size: 0.5rem;
+  margin-bottom: 0.1rem;
+  padding: 0.3rem;
+  appearance: none; /* 去掉默认箭头图标 */
+}
+
+.tabs select option {
+  background-color: transparent !important; /* 确保选项背景透明 */
+  color: #090000; /* 设置选项文字颜色 */
+}
+
+.tabs select:focus {
+  outline: none; /* 去掉焦点边框 */
+}
+
+
 .monitor .tabs a{
 	color: #1950c4;
 	font-size: 0.75rem;
@@ -400,6 +421,9 @@ a{
 
 
 /* 炉膛温度 */
+
+
+
 .quarter .inner {
   display: flex;
   flex-direction: column;
@@ -432,6 +456,7 @@ a{
 }
 .quarter .item {
   width: 50%;
+  text-align: center;
 }
 .quarter h4 {
   color: #fff;
