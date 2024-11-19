@@ -136,8 +136,8 @@ a{
 .monitor .marquee-view{
   position: absolute;
   top: 1.6rem;
-  bottom: 0; 
-  width: 100%; 
+  bottom: 0;
+  width: 100%;
   overflow: hidden;
 }
 .monitor .row{
@@ -164,8 +164,8 @@ a{
 .monitor .marquee-view{
 	position: absolute;
 	top: 1.6rem;
-	bottom: 0; 
-	width: 100%; 
+	bottom: 0;
+	width: 100%;
 	overflow: hidden;
   }
 .monitor .row{
@@ -173,7 +173,7 @@ a{
 	padding: 0.5rem 1.5rem;
 	color: #61a8ff;
 	font-size: 0.5rem;
-	position: relative; 
+	position: relative;
 	display: flex;
 	justify-content: space-between;
   }

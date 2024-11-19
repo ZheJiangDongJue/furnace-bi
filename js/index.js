@@ -1,5 +1,69 @@
 //自调用函数
 
+//#region 常量
+const 设备Uid = 44110607986693;
+//#endregion
+
+//#region 共用函数
+var _G = {};
+_G.Status = {
+    炉膛温度: 0,
+    上区PV:0,
+    中区PV:0,
+    下区PV:0,
+    上区SV:0,
+    中区SV:0,
+    下区SV:0,
+    上区MV:0,
+    中区MV:0,
+    下区MV:0,
+    上区起停:0,
+    中区起停:0,
+    下区起停:0,
+    上区运行时间:0,
+    中区运行时间:0,
+    下区运行时间:0,
+    中区加热X: false,
+    真空泵X: false,
+    冷风机X: false,
+    //....更多其他参数
+}
+_G.stringToBoolean = function (str) {
+    switch (str.toLowerCase()) {
+        case "true":
+            return true;
+        case "false":
+            return false;
+        // 可以根据需要添加更多 case
+        default:
+            return undefined; // 或者抛出错误，取决于你的需求
+    }
+}
+_G.refreshCurrentStatus = function (keys) {
+    $.ajax({
+        type: "GET",
+        url: "http://192.168.3.250:7790/biapiserver/getcurrentstatus",
+        data: {
+            equipmentUid: 设备Uid, // 设备的唯一标识符
+            keys: keys // 需要获取的温度类型
+        }, // Parameters to send
+        dataType: "json",
+        success: function (data) {
+            console.log(data.Data)
+            var obj = JSON.parse(data.Data)
+
+            let result = keys.split(",");
+            for (let i = 0; i < result.length; i++) {
+                _G.Status[result[i]] = obj[result[i]];
+            }
+        },
+        error: function (error) {
+            console.error("Error fetching data:", error);
+        }
+    });
+};
+//#endregion
+
 // 页面布局
 (function () {
     // 1、页面一加载就要知道页面宽度计算
@@ -52,134 +116,199 @@
     });
 })();
 
+//#region 全局定时器
+
+(function () {
+
+    // 当文档加载完成时执行
+    document.addEventListener('DOMContentLoaded', () => {
+
+        // 更新页面中的数据显示
+        function updateData() {
+            // 定义一个数组
+            let statusArray = Object.keys(_G.Status);
+
+            // 使用 join 方法将数组元素拼接成一个字符串，元素之间用逗号分隔
+            let statusString = statusArray.join(",");
+
+            _G.refreshCurrentStatus(statusString);
+        }
+
+        // 每 1 秒钟模拟一次 API 调用并更新数据
+        setInterval(() => {
+            updateData();  // 使用新的数据更新页面上的显示
+        }, 1000);  // 每 1 秒更新一次
+    });
+})();
+//#endregion
+
 // 模块状态（定时器）
 (function () {
     document.addEventListener('DOMContentLoaded', () => {
-
-        // 模拟 API 返回的数据
-        function simulateAPI() {
-            // 随机生成状态，可能的状态有“进行中”，“停止”，“故障”等
-            const statuses = ['进行中', '停止'];
-
-            // 返回模拟的模块状态
-            const data = {
-                heatingStatus: statuses[Math.floor(Math.random() * statuses.length)],   // 加热状态
-                vacuumPumpStatus: statuses[Math.floor(Math.random() * statuses.length)],  // 真空泵状态
-                fanStatus: statuses[Math.floor(Math.random() * statuses.length)],   // 对流风机状态
-            };
-
-            return data;  // 返回模拟的数据
-        }
+        const statuses = {
+            [true]: '进行中',
+            [false]: '停止',
+        };
 
         // 更新页面中的模块状态
         function updateData(data) {
             // 更新加热状态
-            document.getElementById('heatingStatus').innerHTML = data.heatingStatus;
+            // document.getElementById('heatingStatus').innerHTML = data.heatingStatus;
+            document.getElementById('heatingStatus').innerHTML = statuses[_G.stringToBoolean(_G.Status.中区加热X)];
 
             // 更新真空泵状态
-            document.getElementById('vacuumPumpStatus').innerHTML = data.vacuumPumpStatus;
+            document.getElementById('vacuumPumpStatus').innerHTML = statuses[_G.stringToBoolean(_G.Status.真空泵X)];
 
             // 更新对流风机状态
-            document.getElementById('fanStatus').innerHTML = data.fanStatus;
+            document.getElementById('fanStatus').innerHTML = statuses[_G.stringToBoolean(_G.Status.冷风机X)];
         }
 
         // 每 5 秒钟模拟一次 API 调用并更新数据
         setInterval(() => {
-            const newData = simulateAPI();  // 获取新的状态数据
-            updateData(newData);  // 更新页面上的显示
-        }, 1000);  // 每 5 秒更新一次
+            updateData();  // 更新页面上的显示
+        }, 1000);  // 每 1 秒更新一次
     });
 })();
 
 // 炉膛温度、最高温度、最低温度（定时器）
 (function () {
+
+    // 定义一个函数，用于刷新温度
+    function refreshCurrentTemperature() {
+        document.getElementById('currentTemperature').innerHTML = `${_G.Status.炉膛温度}℃`;
+    }
+
+
+    // 定义一个函数，用于刷新最小和最大温度
+    function refreshMinAndMaxTemperature() {
+        // 使用ajax发送GET请求，获取指定时间范围内的最高和最低温度
+        $.ajax({
+            type: "GET",
+            url: "http://192.168.3.250:7790/biapiserver/getminandmaxtemperatureintimerange",
+            data: {
+                equipmentUid: 设备Uid, // 设备的唯一标识符
+                minDateTime: "2024-11-17 00:00:00", // 最小时间
+                maxDateTime: "2024-11-19 00:00:00", // 最大时间
+                keys: "炉膛温度" // 需要获取的温度类型
+            }, // Parameters to send
+            dataType: "json",
+            success: function (data) {
+                var obj = JSON.parse(data.Data)
+
+                // 更新最高温度
+                document.getElementById('maxTemperature').innerHTML = `${obj.MaxValue}℃`;
+
+                // 更新最低温度
+                document.getElementById('minTemperature').innerHTML = `${obj.MinValue}℃`;
+
+            },
+            error: function (error) {
+                console.error("Error fetching data:", error);
+            }
+        });
+    }
+
     // 当文档加载完成时执行
     document.addEventListener('DOMContentLoaded', () => {
 
-        // 模拟 API 返回的数据
-        function simulateAPI() {
-            // 生成随机数据来模拟实时数据变化
-            const data = {
-                currentTemperature: Math.floor(Math.random() * (300 - 200 + 1)) + 200,  // 随机生成当前温度，范围在 200 到 300℃ 之间
-                maxTemperature: Math.floor(Math.random() * (300 - 200 + 1)) + 200,      // 随机生成最高温度，范围在 200 到 300℃ 之间
-                minTemperature: Math.floor(Math.random() * (300 - 200 + 1)) + 200,      // 随机生成最低温度，范围在 200 到 300℃ 之间
-            };
-
-            return data;  // 返回模拟的数据
-        }
-
         // 更新页面中的数据显示
-        function updateData(data) {
-            // 更新当前温度
-            document.getElementById('currentTemperature').innerHTML = `${data.currentTemperature} <small>℃</small>`;
+        function updateData() {
 
-            // 更新最高温度
-            document.getElementById('maxTemperature').innerHTML = `${data.maxTemperature}℃`;
-
-            // 更新最低温度
-            document.getElementById('minTemperature').innerHTML = `${data.minTemperature}℃`;
+            // 刷新当前温度
+            refreshCurrentTemperature();
+            // 刷新最小和最大温度
+            refreshMinAndMaxTemperature();
         }
 
         // 每 5 秒钟模拟一次 API 调用并更新数据
         setInterval(() => {
-            const newData = simulateAPI();  // 获取新的数据
-            updateData(newData);  // 使用新的数据更新页面上的显示
+            updateData();  // 使用新的数据更新页面上的显示
         }, 1000);  // 每 5 秒更新一次
     });
+
+    refreshMinAndMaxTemperature(); // 初始化页面时立即更新一次温度
 })();
 
 // 实时区间（定时器）
 (function () {
+
+    // 更新页面中的数据
+    function updateData() {
+        // 更新上区
+        document.getElementById('upPV').innerHTML = `${_G.Status.上区PV} <small>℃</small>`;
+        document.getElementById('upSV').innerHTML = `${_G.Status.上区SV} <small>℃</small>`;
+        document.getElementById('upOutput').innerHTML = `${_G.Status.上区MV} <small>%</small>`;
+        document.getElementById('upTime').innerHTML = `${_G.Status.上区运行时间} <small>分钟</small>`;
+
+        // 更新中区
+        document.getElementById('midPV').innerHTML = `${_G.Status.中区PV} <small>℃</small>`;
+        document.getElementById('midSV').innerHTML = `${_G.Status.中区SV} <small>℃</small>`;
+        document.getElementById('midOutput').innerHTML = `${_G.Status.中区MV} <small>%</small>`;
+        document.getElementById('midTime').innerHTML = `${_G.Status.中区运行时间} <small>分钟</small>`;
+
+        // 更新下区
+        document.getElementById('downPV').innerHTML = `${_G.Status.下区PV} <small>℃</small>`;
+        document.getElementById('downSV').innerHTML = `${_G.Status.下区SV} <small>℃</small>`;
+        document.getElementById('downOutput').innerHTML = `${_G.Status.下区MV} <small>%</small>`;
+        document.getElementById('downTime').innerHTML = `${_G.Status.下区运行时间} <small>分钟</small>`;
+    }
+
     document.addEventListener('DOMContentLoaded', () => {
 
-        // 模拟 API 返回的数据
-        function simulateAPI() {
-            return {
-                // 随机生成各区的 PV、SV、输出和时间数据
-                upPV: Math.floor(Math.random() * (50 - 20 + 1)) + 20,  // 随机生成 20~50 之间的温度
-                upSV: Math.floor(Math.random() * (50 - 30 + 1)) + 30,  // 随机生成 30~50 之间的温度
-                upOutput: Math.floor(Math.random() * 100),  // 随机生成 0~100 之间的输出百分比
-                upTime: Math.floor(Math.random() * (20 - 10 + 1)) + 10,  // 随机生成 10~20 之间的时间（分钟）
+        // // 模拟 API 返回的数据
+        // function simulateAPI() {
+        //     return {
+        //         // 随机生成各区的 PV、SV、输出和时间数据
+        //         upPV: Math.floor(Math.random() * (50 - 20 + 1)) + 20,  // 随机生成 20~50 之间的温度
+        //         upSV: Math.floor(Math.random() * (50 - 30 + 1)) + 30,  // 随机生成 30~50 之间的温度
+        //         upOutput: Math.floor(Math.random() * 100),  // 随机生成 0~100 之间的输出百分比
+        //         upTime: Math.floor(Math.random() * (20 - 10 + 1)) + 10,  // 随机生成 10~20 之间的时间（分钟）
 
-                midPV: Math.floor(Math.random() * (40 - 10 + 1)) + 10,  // 随机生成 10~40 之间的温度
-                midSV: Math.floor(Math.random() * (40 - 20 + 1)) + 20,  // 随机生成 20~40 之间的温度
-                midOutput: Math.floor(Math.random() * 100),  // 随机生成 0~100 之间的输出百分比
-                midTime: Math.floor(Math.random() * (20 - 10 + 1)) + 10,  // 随机生成 10~20 之间的时间（分钟）
+        //         midPV: Math.floor(Math.random() * (40 - 10 + 1)) + 10,  // 随机生成 10~40 之间的温度
+        //         midSV: Math.floor(Math.random() * (40 - 20 + 1)) + 20,  // 随机生成 20~40 之间的温度
+        //         midOutput: Math.floor(Math.random() * 100),  // 随机生成 0~100 之间的输出百分比
+        //         midTime: Math.floor(Math.random() * (20 - 10 + 1)) + 10,  // 随机生成 10~20 之间的时间（分钟）
 
-                downPV: Math.floor(Math.random() * (50 - 30 + 1)) + 30,  // 随机生成 30~50 之间的温度
-                downSV: Math.floor(Math.random() * (50 - 40 + 1)) + 40,  // 随机生成 40~50 之间的温度
-                downOutput: Math.floor(Math.random() * 100),  // 随机生成 0~100 之间的输出百分比
-                downTime: Math.floor(Math.random() * (20 - 10 + 1)) + 10,  // 随机生成 10~20 之间的时间（分钟）
-            };
-        }
+        //         downPV: Math.floor(Math.random() * (50 - 30 + 1)) + 30,  // 随机生成 30~50 之间的温度
+        //         downSV: Math.floor(Math.random() * (50 - 40 + 1)) + 40,  // 随机生成 40~50 之间的温度
+        //         downOutput: Math.floor(Math.random() * 100),  // 随机生成 0~100 之间的输出百分比
+        //         downTime: Math.floor(Math.random() * (20 - 10 + 1)) + 10,  // 随机生成 10~20 之间的时间（分钟）
+        //     };
+        // }
 
-        // 更新页面中的数据
-        function updateData(data) {
-            // 更新上区
-            document.getElementById('upPV').innerHTML = `${data.upPV} <small>℃</small>`;
-            document.getElementById('upSV').innerHTML = `${data.upSV} <small>℃</small>`;
-            document.getElementById('upOutput').innerHTML = `${data.upOutput} <small>%</small>`;
-            document.getElementById('upTime').innerHTML = `${data.upTime} <small>分钟</small>`;
+        // // 更新页面中的数据
+        // function updateData(data) {
+        //     // 更新上区
+        //     document.getElementById('upPV').innerHTML = `${data.upPV} <small>℃</small>`;
+        //     document.getElementById('upSV').innerHTML = `${data.upSV} <small>℃</small>`;
+        //     document.getElementById('upOutput').innerHTML = `${data.upOutput} <small>%</small>`;
+        //     document.getElementById('upTime').innerHTML = `${data.upTime} <small>分钟</small>`;
 
-            // 更新中区
-            document.getElementById('midPV').innerHTML = `${data.midPV} <small>℃</small>`;
-            document.getElementById('midSV').innerHTML = `${data.midSV} <small>℃</small>`;
-            document.getElementById('midOutput').innerHTML = `${data.midOutput} <small>%</small>`;
-            document.getElementById('midTime').innerHTML = `${data.midTime} <small>分钟</small>`;
+        //     // 更新中区
+        //     document.getElementById('midPV').innerHTML = `${data.midPV} <small>℃</small>`;
+        //     document.getElementById('midSV').innerHTML = `${data.midSV} <small>℃</small>`;
+        //     document.getElementById('midOutput').innerHTML = `${data.midOutput} <small>%</small>`;
+        //     document.getElementById('midTime').innerHTML = `${data.midTime} <small>分钟</small>`;
 
-            // 更新下区
-            document.getElementById('downPV').innerHTML = `${data.downPV} <small>℃</small>`;
-            document.getElementById('downSV').innerHTML = `${data.downSV} <small>℃</small>`;
-            document.getElementById('downOutput').innerHTML = `${data.downOutput} <small>%</small>`;
-            document.getElementById('downTime').innerHTML = `${data.downTime} <small>分钟</small>`;
-        }
+        //     // 更新下区
+        //     document.getElementById('downPV').innerHTML = `${data.downPV} <small>℃</small>`;
+        //     document.getElementById('downSV').innerHTML = `${data.downSV} <small>℃</small>`;
+        //     document.getElementById('downOutput').innerHTML = `${data.downOutput} <small>%</small>`;
+        //     document.getElementById('downTime').innerHTML = `${data.downTime} <small>分钟</small>`;
+        // }
+
+        // // 每 5 秒钟模拟一次 API 调用并更新数据
+        // setInterval(() => {
+        //     const newData = simulateAPI();  // 获取新的数据
+        //     updateData(newData);  // 更新页面上的显示
+        // }, 1000);  // 每 5 秒更新一次
 
         // 每 5 秒钟模拟一次 API 调用并更新数据
         setInterval(() => {
-            const newData = simulateAPI();  // 获取新的数据
-            updateData(newData);  // 更新页面上的显示
+            updateData();  // 更新页面上的显示
         }, 1000);  // 每 5 秒更新一次
     });
+    updateData();
 })();
 
 // 温度折线图（定时器）
@@ -496,9 +625,18 @@ function ajax(type, url, params, callback) {
 }
 
 // 调用 ajax 函数
-ajax("get", "http://192.168.3.250:7790/spiderapiserver/getsmmpricewithdaterange?dbName=PEM1&startDate=2024-10-01&endDate=2024-11-08", null, function(res) {
-    // 获取Status并显示在<h4>元素上
-    if (res && res.Status !== undefined) {
-        document.getElementById('status').textContent = `${res.Status}℃`;
-    }
-});
+// ajax("get", "http://192.168.3.250:7790/spiderapiserver/getsmmpricewithdaterange?dbName=PEM1&startDate=2024-10-01&endDate=2024-11-08", null, function (res) {
+//     // 获取Status并显示在<h4>元素上
+//     if (res && res.Status !== undefined) {
+//         document.getElementById('status').textContent = `${res.Status}℃`;
+//     }
+// });
+
+// ajax("get", "http://192.168.3.250:7790/biapiserver/getminandmaxtemperatureintimerange", {
+//     equipmentUid : 设备Uid,
+//     minDateTime:"2024-11-17 00:00:00",
+//     maxDateTime:"2024-11-19 00:00:00",
+//     keys:"炉膛温度"
+// }, function (res) {
+//     console.log(res)
+// });

@@ -2,12 +2,12 @@
 <html lang="en">
 
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta http-equiv="X-UA-Compatible" content="ie=edge" />
     <title>可视化平台</title>
-    <link rel="stylesheet" href="./css/index.css">
-    <link rel="stylesheet" href="./fonts/icomoon.css">
+    <link rel="stylesheet" href="./css/index.css" />
+    <link rel="stylesheet" href="./fonts/icomoon.css" />
 </head>
 
 <body>
@@ -22,27 +22,30 @@
                         <h3>模块状态</h3>
                         <div class="chart">
                             <div class="item">
-                <span>
-                    <i class="icon-plane"></i>
-                    加热
-                </span>
-                                <h4 id="heatingStatus">进行中</h4>  <!-- 用 id 标识动态更新内容 -->
+                                <span>
+                                    <i class="icon-plane"></i>
+                                    加热
+                                </span>
+                                <h4 id="heatingStatus">进行中</h4>
+                                <!-- 用 id 标识动态更新内容 -->
                             </div>
                             <div class="item-border"></div>
                             <div class="item">
-                <span>
-                    <i class="icon-plane"></i>
-                    真空泵
-                </span>
-                                <h4 id="vacuumPumpStatus">进行中</h4>  <!-- 用 id 标识动态更新内容 -->
+                                <span>
+                                    <i class="icon-plane"></i>
+                                    真空泵
+                                </span>
+                                <h4 id="vacuumPumpStatus">进行中</h4>
+                                <!-- 用 id 标识动态更新内容 -->
                             </div>
                             <div class="item-border"></div>
                             <div class="item">
-                <span>
-                    <i class="icon-plane"></i>
-                    对流风机
-                </span>
-                                <h4 id="fanStatus">进行中</h4>  <!-- 用 id 标识动态更新内容 -->
+                                <span>
+                                    <i class="icon-plane"></i>
+                                    对流风机
+                                </span>
+                                <h4 id="fanStatus">进行中</h4>
+                                <!-- 用 id 标识动态更新内容 -->
                             </div>
                         </div>
                     </div>
@@ -54,22 +57,24 @@
                         <div class="chart">
                             <div class="box">
                                 <div class="gauge"></div>
-                                <div class="label" id="currentTemperature">75<small> ℃</small></div>
+                                <div class="label" id="currentTemperature">
+                                    75<small> ℃</small>
+                                </div>
                             </div>
                             <div class="data">
                                 <div class="item">
-                                    <h4 id="maxTemperature">300℃</h4>
-                                    <span>
-                        <i class="icon-dot" style="color: #6acca3"></i>
-                        最高温度
-                    </span>
-                                </div>
-                                <div class="item">
                                     <h4 id="minTemperature">100℃</h4>
                                     <span>
-                        <i class="icon-dot" style="color: #ed3f35"></i>
-                        最低温度
-                    </span>
+                                        <i class="icon-dot" style="color: #6acca3"></i>
+                                        最低温度
+                                    </span>
+                                </div>
+                                <div class="item">
+                                    <h4 id="maxTemperature">300℃</h4>
+                                    <span>
+                                        <i class="icon-dot" style="color: #ed3f35"></i>
+                                        最高温度
+                                    </span>
                                 </div>
                             </div>
                         </div>
@@ -82,32 +87,36 @@
                     <h3>上区</h3>
                     <div class="chart">
                         <div class="item">
-                            <h4 id="upPV">32 <small>℃</small></h4> <!-- 用 id 来动态更新 -->
+                            <h4 id="upPV">32 <small>℃</small></h4>
+                            <!-- 用 id 来动态更新 -->
                             <span>
-                            <i class="icon-plane"></i>
-                            实际温度
+                                <i class="icon-plane"></i>
+                                实际温度
                             </span>
                         </div>
                         <div class="item">
-                            <h4 id="upSV">45 <small>℃</small></h4> <!-- 用 id 来动态更新 -->
+                            <h4 id="upSV">45 <small>℃</small></h4>
+                            <!-- 用 id 来动态更新 -->
                             <span>
                                 <i class="icon-plane"></i>
                                 程序设定温度
                             </span>
                         </div>
                         <div class="item">
-                            <h4 id="upOutput">12 <small>%</small></h4> <!-- 用 id 来动态更新 -->
+                            <h4 id="upOutput">12 <small>%</small></h4>
+                            <!-- 用 id 来动态更新 -->
                             <span>
                                 <i class="icon-plane"></i>
                                 输出
                             </span>
                         </div>
                         <div class="item">
-                            <h4 id="upTime">12 <small>分钟</small></h4> <!-- 用 id 来动态更新 -->
+                            <h4 id="upTime">12 <small>分钟</small></h4>
+                            <!-- 用 id 来动态更新 -->
                             <span>
-                    <i class="icon-plane"></i>
-                    时间
-                </span>
+                                <i class="icon-plane"></i>
+                                时间
+                            </span>
                         </div>
                     </div>
                 </div>
@@ -117,32 +126,36 @@
                     <h3>中区</h3>
                     <div class="chart">
                         <div class="item">
-                            <h4 id="midPV">19 <small>℃</small></h4> <!-- 用 id 来动态更新 -->
+                            <h4 id="midPV">19 <small>℃</small></h4>
+                            <!-- 用 id 来动态更新 -->
                             <span>
-                    <i class="icon-plane"></i>
-                    实际温度
-                </span>
+                                <i class="icon-plane"></i>
+                                实际温度
+                            </span>
                         </div>
                         <div class="item">
-                            <h4 id="midSV">19 <small>℃</small></h4> <!-- 用 id 来动态更新 -->
+                            <h4 id="midSV">19 <small>℃</small></h4>
+                            <!-- 用 id 来动态更新 -->
                             <span>
-                    <i class="icon-plane"></i>
-                    程序设定温度
-                </span>
+                                <i class="icon-plane"></i>
+                                程序设定温度
+                            </span>
                         </div>
                         <div class="item">
-                            <h4 id="midOutput">12 <small>%</small></h4> <!-- 用 id 来动态更新 -->
+                            <h4 id="midOutput">12 <small>%</small></h4>
+                            <!-- 用 id 来动态更新 -->
                             <span>
-                    <i class="icon-plane"></i>
-                    输出
-                </span>
+                                <i class="icon-plane"></i>
+                                输出
+                            </span>
                         </div>
                         <div class="item">
-                            <h4 id="midTime">12 <small>分钟</small></h4> <!-- 用 id 来动态更新 -->
+                            <h4 id="midTime">12 <small>分钟</small></h4>
+                            <!-- 用 id 来动态更新 -->
                             <span>
-                    <i class="icon-plane"></i>
-                    时间
-                </span>
+                                <i class="icon-plane"></i>
+                                时间
+                            </span>
                         </div>
                     </div>
                 </div>
@@ -152,32 +165,36 @@
                     <h3>下区</h3>
                     <div class="chart">
                         <div class="item">
-                            <h4 id="downPV">39 <small>℃</small></h4> <!-- 用 id 来动态更新 -->
+                            <h4 id="downPV">39 <small>℃</small></h4>
+                            <!-- 用 id 来动态更新 -->
                             <span>
-                    <i class="icon-plane"></i>
-                    实际温度
-                </span>
+                                <i class="icon-plane"></i>
+                                实际温度
+                            </span>
                         </div>
                         <div class="item">
-                            <h4 id="downSV">39 <small>℃</small></h4> <!-- 用 id 来动态更新 -->
+                            <h4 id="downSV">39 <small>℃</small></h4>
+                            <!-- 用 id 来动态更新 -->
                             <span>
-                    <i class="icon-plane"></i>
-                    程序设定温度
-                </span>
+                                <i class="icon-plane"></i>
+                                程序设定温度
+                            </span>
                         </div>
                         <div class="item">
-                            <h4 id="downOutput">12 <small>%</small></h4> <!-- 用 id 来动态更新 -->
+                            <h4 id="downOutput">12 <small>%</small></h4>
+                            <!-- 用 id 来动态更新 -->
                             <span>
-                    <i class="icon-plane"></i>
-                    输出
-                </span>
+                                <i class="icon-plane"></i>
+                                输出
+                            </span>
                         </div>
                         <div class="item">
-                            <h4 id="downTime">12 <small>分钟</small></h4> <!-- 用 id 来动态更新 -->
+                            <h4 id="downTime">12 <small>分钟</small></h4>
+                            <!-- 用 id 来动态更新 -->
                             <span>
-                    <i class="icon-plane"></i>
-                    时间
-                </span>
+                                <i class="icon-plane"></i>
+                                时间
+                            </span>
                         </div>
                     </div>
                 </div>
@@ -191,7 +208,7 @@
                     <div class="tabs">
                         <a href="javascript:;" data-index="0" class="active">生产实时明细</a>
                     </div>
-                    <div class="content" style="display: block;">
+                    <div class="content" style="display: block">
                         <div class="head">
                             <span class="col">物料编码</span>
                             <span class="col">物料名称</span>
@@ -314,7 +331,8 @@
                     </div>
                     <div class="chart">
                         <div class="label">单位: 摄氏度</div>
-                        <div class="line"></div>  <!-- 这里是用于展示echarts图表的容器 -->
+                        <div class="line"></div>
+                        <!-- 这里是用于展示echarts图表的容器 -->
                     </div>
                 </div>
             </div>
@@ -324,13 +342,11 @@
             <h3 class="center-text">浙江东爵线缆欢迎您</h3>
         </div>
     </div>
-
 </body>
 
 <script src="./node_modules/jquery/dist/jquery.min.js"></script>
 <script src="./node_modules/echarts/dist/echarts.min.js"></script>
 
 <script src="./js/index.js"></script>
-
 
 </html>
