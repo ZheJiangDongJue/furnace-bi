@@ -24,50 +24,35 @@
     -moz-osx-font-smoothing: grayscale;
 }
 
-.icon-dot:before {
-    content: "\e900";
-}
-
-.icon-cup1:before {
-    content: "\e901";
-}
-
-.icon-cup2:before {
-    content: "\e902";
-}
-
-.icon-cup3:before {
-    content: "\e903";
-}
-
+/*时间*/
 .icon-clock:before {
-    content: "\e904";
+    content: "\e94e";
 }
-
-.icon-down:before {
-    content: "\e905";
+/*真空*/
+.icon-stopwatch:before {
+    content: "\e952";
 }
-
-.icon-cube:before {
-    content: "\e906";
+/*设定温度*/
+.icon-equalizer:before {
+    content: "\e992";
 }
-
-.icon-plane:before {
-    content: "\e907";
+/*实际温度、加热*/
+.icon-fire:before {
+    content: "\e9a9";
 }
-
-.icon-train:before {
-    content: "\e908";
+/*输出*/
+.icon-pause:before {
+    content: "\ea16";
 }
-
-.icon-bus:before {
-    content: "\e909";
+/*对流*/
+.icon-loop:before {
+    content: "\ea2d";
 }
-
-.icon-bag:before {
-    content: "\e90a";
+/*对流备选*/
+.icon-shuffle:before {
+    content: "\ea30";
 }
-
-.icon-up:before {
-    content: "\e90b";
+/*对流备选*/
+.icon-tab:before {
+    content: "\ea45";
 }

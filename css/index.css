@@ -212,10 +212,30 @@ a{
 .point {
   height: 8rem;
 }
+.point .text {
+  display: flex; /* 使用 Flexbox 实现横向排列 */
+  justify-content: space-between; /* 保证两侧的元素有最大间距 */
+}
+.point .text {
+  flex: 1; /* 各占 1:1 权重 */
+  text-align: left; /* 默认左对齐 */
+}
+.point .text .align-right {
+  text-align: right;
+  display: flex;
+}
+
 .point .chart {
   display: flex;
   margin-top: 1rem;
   justify-content: space-between;
+}
+.point .data {
+  display: flex;
+  justify-content: space-between;
+}
+.point .item {
+  text-align: center;
 }
 .point .pie {
   width: 13rem;

@@ -23,28 +23,28 @@
                         <div class="chart">
                             <div class="item">
                                 <span>
-                                    <i class="icon-plane"></i>
+                                    <i class="icon-fire"></i>
                                     加热
                                 </span>
-                                <h4 id="heatingStatus">进行中</h4>
+                                <h4 id="heatingStatus">初始</h4>
                                 <!-- 用 id 标识动态更新内容 -->
                             </div>
                             <div class="item-border"></div>
                             <div class="item">
                                 <span>
-                                    <i class="icon-plane"></i>
+                                    <i class="icon-stopwatch"></i>
                                     真空泵
                                 </span>
-                                <h4 id="vacuumPumpStatus">进行中</h4>
+                                <h4 id="vacuumPumpStatus">初始</h4>
                                 <!-- 用 id 标识动态更新内容 -->
                             </div>
                             <div class="item-border"></div>
                             <div class="item">
                                 <span>
-                                    <i class="icon-plane"></i>
+                                    <i class="icon-loop"></i>
                                     对流风机
                                 </span>
-                                <h4 id="fanStatus">进行中</h4>
+                                <h4 id="fanStatus">初始</h4>
                                 <!-- 用 id 标识动态更新内容 -->
                             </div>
                         </div>
@@ -65,14 +65,14 @@
                                 <div class="item">
                                     <h4 id="minTemperature">100℃</h4>
                                     <span>
-                                        <i class="icon-dot" style="color: #6acca3"></i>
+                                        <i class="icon-fire" style="color: #6acca3"></i>
                                         最低温度
                                     </span>
                                 </div>
                                 <div class="item">
                                     <h4 id="maxTemperature">300℃</h4>
                                     <span>
-                                        <i class="icon-dot" style="color: #ed3f35"></i>
+                                        <i class="icon-fire" style="color: #ed3f35"></i>
                                         最高温度
                                     </span>
                                 </div>
@@ -84,13 +84,19 @@
             <!--设备区块信息-->
             <div class="point panel">
                 <div class="inner">
-                    <h3>上区</h3>
+                    <div class="text">
+                        <h3>上区</h3>
+                        <div class="align-right">
+                            <h3>状态：</h3>
+                            <h3 id="upStatus">初始</h3>
+                        </div>
+                    </div>
                     <div class="chart">
                         <div class="item">
                             <h4 id="upPV">32 <small>℃</small></h4>
                             <!-- 用 id 来动态更新 -->
                             <span>
-                                <i class="icon-plane"></i>
+                                <i class="icon-fire"></i>
                                 实际温度
                             </span>
                         </div>
@@ -98,7 +104,7 @@
                             <h4 id="upSV">45 <small>℃</small></h4>
                             <!-- 用 id 来动态更新 -->
                             <span>
-                                <i class="icon-plane"></i>
+                                <i class="icon-equalizer"></i>
                                 程序设定温度
                             </span>
                         </div>
@@ -106,7 +112,7 @@
                             <h4 id="upOutput">12 <small>%</small></h4>
                             <!-- 用 id 来动态更新 -->
                             <span>
-                                <i class="icon-plane"></i>
+                                <i class="icon-pause"></i>
                                 输出
                             </span>
                         </div>
@@ -114,7 +120,7 @@
                             <h4 id="upTime">12 <small>分钟</small></h4>
                             <!-- 用 id 来动态更新 -->
                             <span>
-                                <i class="icon-plane"></i>
+                                <i class="icon-clock"></i>
                                 时间
                             </span>
                         </div>
@@ -123,13 +129,19 @@
             </div>
             <div class="point panel">
                 <div class="inner">
-                    <h3>中区</h3>
+                    <div class="text">
+                        <h3>中区</h3>
+                        <div class="align-right">
+                            <h3>状态：</h3>
+                            <h3 id="midStatus">初始</h3>
+                        </div>
+                    </div>
                     <div class="chart">
                         <div class="item">
                             <h4 id="midPV">19 <small>℃</small></h4>
                             <!-- 用 id 来动态更新 -->
                             <span>
-                                <i class="icon-plane"></i>
+                                <i class="icon-fire"></i>
                                 实际温度
                             </span>
                         </div>
@@ -137,7 +149,7 @@
                             <h4 id="midSV">19 <small>℃</small></h4>
                             <!-- 用 id 来动态更新 -->
                             <span>
-                                <i class="icon-plane"></i>
+                                <i class="icon-equalizer"></i>
                                 程序设定温度
                             </span>
                         </div>
@@ -145,7 +157,7 @@
                             <h4 id="midOutput">12 <small>%</small></h4>
                             <!-- 用 id 来动态更新 -->
                             <span>
-                                <i class="icon-plane"></i>
+                                <i class="icon-pause"></i>
                                 输出
                             </span>
                         </div>
@@ -153,7 +165,7 @@
                             <h4 id="midTime">12 <small>分钟</small></h4>
                             <!-- 用 id 来动态更新 -->
                             <span>
-                                <i class="icon-plane"></i>
+                                <i class="icon-clock"></i>
                                 时间
                             </span>
                         </div>
@@ -162,13 +174,19 @@
             </div>
             <div class="point panel">
                 <div class="inner">
-                    <h3>下区</h3>
+                    <div class="text">
+                        <h3>下区</h3>
+                        <div class="align-right">
+                            <h3>状态：</h3>
+                            <h3 id="downStatus">初始</h3>
+                        </div>
+                    </div>
                     <div class="chart">
                         <div class="item">
                             <h4 id="downPV">39 <small>℃</small></h4>
                             <!-- 用 id 来动态更新 -->
                             <span>
-                                <i class="icon-plane"></i>
+                                <i class="icon-fire"></i>
                                 实际温度
                             </span>
                         </div>
@@ -176,7 +194,7 @@
                             <h4 id="downSV">39 <small>℃</small></h4>
                             <!-- 用 id 来动态更新 -->
                             <span>
-                                <i class="icon-plane"></i>
+                                <i class="icon-equalizer"></i>
                                 程序设定温度
                             </span>
                         </div>
@@ -184,7 +202,7 @@
                             <h4 id="downOutput">12 <small>%</small></h4>
                             <!-- 用 id 来动态更新 -->
                             <span>
-                                <i class="icon-plane"></i>
+                                <i class="icon-pause"></i>
                                 输出
                             </span>
                         </div>
@@ -192,7 +210,7 @@
                             <h4 id="downTime">12 <small>分钟</small></h4>
                             <!-- 用 id 来动态更新 -->
                             <span>
-                                <i class="icon-plane"></i>
+                                <i class="icon-clock"></i>
                                 时间
                             </span>
                         </div>
