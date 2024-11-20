@@ -54,6 +54,7 @@ _G.stringToBoolean = function (str) {
             return undefined; // 或者抛出错误，取决于你的需求
     }
 }
+
 _G.refreshCurrentStatus = function (keys) {
     $.ajax({
         type: "GET",
@@ -201,29 +202,38 @@ _G.获取最后启动时间 = function () {
 (function () {
     document.addEventListener('DOMContentLoaded', () => {
         const statuses = {
-            [true]: '进行中',
-            [false]: '停止',
+            true: { text: '进行中', color: '#00CC00' },  // 状态为 true 时
+            false: { text: '停止', color: '#FF0000' }      // 状态为 false 时
         };
 
         // 更新页面中的模块状态
         function updateData(data) {
             // 更新加热状态
-            // document.getElementById('heatingStatus').innerHTML = data.heatingStatus;
-            document.getElementById('heatingStatus').innerHTML = statuses[_G.stringToBoolean(_G.Status.中区加热X)];
+            const heatingStatusElement = document.getElementById('heatingStatus');
+            const heatingStatus = statuses[_G.stringToBoolean(_G.Status.中区加热X)];
+            heatingStatusElement.innerHTML = heatingStatus.text;
+            heatingStatusElement.style.color = heatingStatus.color;
 
             // 更新真空泵状态
-            document.getElementById('vacuumPumpStatus').innerHTML = statuses[_G.stringToBoolean(_G.Status.真空泵X)];
+            const vacuumPumpStatusElement = document.getElementById('vacuumPumpStatus');
+            const vacuumPumpStatus = statuses[_G.stringToBoolean(_G.Status.真空泵X)];
+            vacuumPumpStatusElement.innerHTML = vacuumPumpStatus.text;
+            vacuumPumpStatusElement.style.color = vacuumPumpStatus.color;
 
             // 更新对流风机状态
-            document.getElementById('fanStatus').innerHTML = statuses[_G.stringToBoolean(_G.Status.冷风机X)];
+            const fanStatusElement = document.getElementById('fanStatus');
+            const fanStatus = statuses[_G.stringToBoolean(_G.Status.冷风机X)];
+            fanStatusElement.innerHTML = fanStatus.text;
+            fanStatusElement.style.color = fanStatus.color;
         }
 
-        // 每 5 秒钟模拟一次 API 调用并更新数据
+        // 每 1 秒钟模拟一次 API 调用并更新数据
         setInterval(() => {
             updateData();  // 更新页面上的显示
-        }, 1000);  // 每 1 秒更新一次
+        }, 1000);
     });
 })();
+
 
 // 炉膛温度、最高温度、最低温度（定时器）
 (function () {
