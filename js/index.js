@@ -1,34 +1,49 @@
 //自调用函数
 
 //#region 常量
+const 主数据库名称 = "PEM1"
+const 设备id = 13;
 const 设备Uid = 44110607986693;
+const 默认上次获取的最后时间 = '2024-01-01 00:00:00'
+
+const 输出调试信息 = true;
+
 //#endregion
 
 //#region 共用函数
 var _G = {};
 _G.Status = {
     炉膛温度: 0,
-    上区PV:0,
-    中区PV:0,
-    下区PV:0,
-    上区SV:0,
-    中区SV:0,
-    下区SV:0,
-    上区MV:0,
-    中区MV:0,
-    下区MV:0,
-    上区起停:0,
-    中区起停:0,
-    下区起停:0,
-    上区运行时间:0,
-    中区运行时间:0,
-    下区运行时间:0,
+    上区PV: 0,
+    中区PV: 0,
+    下区PV: 0,
+    上区SV: 0,
+    中区SV: 0,
+    下区SV: 0,
+    上区MV: 0,
+    中区MV: 0,
+    下区MV: 0,
+    上区起停: 0,
+    中区起停: 0,
+    下区起停: 0,
+    上区运行时间: 0,
+    中区运行时间: 0,
+    下区运行时间: 0,
     中区加热X: false,
     真空泵X: false,
     冷风机X: false,
     //....更多其他参数
+
+    //特殊
+    最后启动时间_str: "2024-01-01 00:00:00"
+}
+_G.isBoolean = function (value) {
+    return typeof value === 'boolean';
 }
 _G.stringToBoolean = function (str) {
+    if (_G.isBoolean(str)) {
+        return str; // 如果已经是布尔值，则直接返回
+    }
     switch (str.toLowerCase()) {
         case "true":
             return true;
@@ -49,13 +64,44 @@ _G.refreshCurrentStatus = function (keys) {
         }, // Parameters to send
         dataType: "json",
         success: function (data) {
-            console.log(data.Data)
+            if (输出调试信息 === true) {
+                console.log(data.Data)
+            }
             var obj = JSON.parse(data.Data)
 
             let result = keys.split(",");
             for (let i = 0; i < result.length; i++) {
                 _G.Status[result[i]] = obj[result[i]];
             }
+        },
+        error: function (error) {
+            console.error("Error fetching data:", error);
+        }
+    });
+};
+_G.获取最后启动时间 = function () {
+    $.ajax({
+        type: "GET",
+        url: "http://192.168.3.250:7790/biapiserver/getlastopendatetime",
+        data: {
+            equipmentUid: 设备Uid, // 设备的唯一标识符
+            condition: "ParameterName='中区加热X' and Value='True'" // 需要获取的温度类型
+        }, // Parameters to send
+        dataType: "json",
+        success: function (data) {
+
+            const date = new Date(data);
+            const year = date.getFullYear();
+            const month = String(date.getMonth() + 1).padStart(2, '0'); // 月份从0开始，需要加1，并补零
+            const day = String(date.getDate()).padStart(2, '0');
+            const hours = String(date.getHours()).padStart(2, '0');
+            const minutes = String(date.getMinutes()).padStart(2, '0');
+            const seconds = String(date.getSeconds()).padStart(2, '0');
+            // const milliseconds = String(date.getMilliseconds()).padStart(3, '0');
+
+            const formattedTime = `${year}-${month}-${day} ${hours}:${minutes}:${seconds}`;
+
+            _G.Status.最后启动时间_str = formattedTime;
         },
         error: function (error) {
             console.error("Error fetching data:", error);
@@ -81,6 +127,14 @@ _G.refreshCurrentStatus = function (keys) {
         // 设置给html
         html.style.fontSize = fontSize;
     }
+    // var refreshViewport = function () {
+    //     // 获取新的视口大小
+    //     const newViewportWidth = window.innerWidth;
+    //     const newViewportHeight = window.innerHeight;
+
+    //     console.log("新视口宽度:", newViewportWidth);
+    //     console.log("新视口高度:", newViewportHeight);
+    // }
     setFont();
     // 2、页面改变的时候也需要设置
     // 尺寸改变事件
@@ -132,6 +186,7 @@ _G.refreshCurrentStatus = function (keys) {
             let statusString = statusArray.join(",");
 
             _G.refreshCurrentStatus(statusString);
+            _G.获取最后启动时间();
         }
 
         // 每 1 秒钟模拟一次 API 调用并更新数据
@@ -184,12 +239,12 @@ _G.refreshCurrentStatus = function (keys) {
         // 使用ajax发送GET请求，获取指定时间范围内的最高和最低温度
         $.ajax({
             type: "GET",
-            url: "http://192.168.3.250:7790/biapiserver/getminandmaxtemperatureintimerange",
+            url: "http://192.168.3.250:7790/biapiserver/getminandmaxvalueintimerange",
             data: {
                 equipmentUid: 设备Uid, // 设备的唯一标识符
                 minDateTime: "2024-11-17 00:00:00", // 最小时间
                 maxDateTime: "2024-11-19 00:00:00", // 最大时间
-                keys: "炉膛温度" // 需要获取的温度类型
+                temperatureKey: "炉膛温度" // 需要获取的温度类型
             }, // Parameters to send
             dataType: "json",
             success: function (data) {
@@ -311,6 +366,136 @@ _G.refreshCurrentStatus = function (keys) {
     updateData();
 })();
 
+//#region 中间区域
+
+//#region 明细列表
+(function () {
+
+    var 获取到的最后时间 = '2024-01-01 00:00:00'
+
+    function createRow(data) {
+        const newRow = document.createElement('div');
+        newRow.className = 'row';
+        var 区域;
+        switch (data.FurnacePlacement) {
+            case 1:
+                区域 = "上区"
+                break;
+            case 2:
+                区域 = "中区"
+                break;
+            case 3:
+                区域 = "下区"
+                break;
+            default:
+                区域 = "未知"
+                break;
+        }
+
+        let newDateString = data.EquipmentStartTime.replace("T", " ");
+        newRow.innerHTML = `
+        <span class="col">${data.MaterialCode}</span>
+        <span class="col">${data.MaterialName}</span>
+        <span class="col">${data.MaterialSpecType}</span>
+        <span class="col">${区域}</span>
+        <span class="col">${newDateString}</span>
+        <span class="icon-dot"></span>`;
+        return newRow;
+    }
+
+    function clearContainer(parentId) {
+        const parent = document.getElementById(parentId);
+        if (parent) {
+            parent.innerHTML = '';
+        } else {
+            console.error("ID 为 '" + parentId + "' 的元素未找到。");
+        }
+    }
+
+    function insertRowAtBeginning(parentId, data) {
+        const parent = document.getElementById(parentId);
+
+        if (!parent) {
+            console.error("ID 为 '" + parentId + "' 的元素未找到。");
+            return;
+        }
+
+        // 使用 insertBefore 将新行插入到第一个子元素之前
+        parent.insertBefore(createRow(data), parent.firstChild);
+    }
+
+    function appendRowTemplate(parentId, data) {
+        const parent = document.getElementById(parentId);
+
+        if (!parent) {
+            console.error("Element with ID '" + parentId + "' not found.");
+            return;
+        }
+
+        parent.appendChild(createRow(data));
+    }
+
+
+    // 定义一个函数，用于获取最近审批的明细数据
+    function getLastDetailOfThisDevice() {
+        $.ajax({
+            type: "GET",
+            url: "http://192.168.3.250:7790/biapiserver/getlastdetailofthisdevice",
+            data: {
+                dbName: 主数据库名称, // 需要获取的温度类型
+                equipmentid: 设备id, // 设备的唯一标识符
+                lastTime: 获取到的最后时间,
+            }, // Parameters to send
+            dataType: "json",
+            success: function (data) {
+                var obj = JSON.parse(data.Data)
+
+                if (输出调试信息 === true) {
+                    console.log(obj)
+                }
+
+                for (var i = obj.length - 1; i >= 0; i--) {
+                    insertRowAtBeginning('detail_list', obj[i]);
+                }
+
+                if (obj.length > 0) {
+                    获取到的最后时间 = obj[obj.length - 1].EquipmentStartTime.replace("T", " ");
+                }
+            },
+            error: function (error) {
+                console.error("Error fetching data:", error);
+            }
+        });
+    }
+
+    // 更新页面中的数据
+    function updateData() {
+        getLastDetailOfThisDevice(); // 获取最新的数据
+    }
+
+    document.addEventListener('DOMContentLoaded', () => {
+
+
+
+        // // 每 5 秒钟模拟一次 API 调用并更新数据
+        // setInterval(() => {
+        //     const newData = simulateAPI();  // 获取新的数据
+        //     updateData(newData);  // 更新页面上的显示
+        // }, 1000);  // 每 5 秒更新一次
+
+        // 每 5 秒钟模拟一次 API 调用并更新数据
+        setInterval(() => {
+            updateData();  // 更新页面上的显示
+        }, 5000);  // 每 5 秒更新一次
+    });
+    clearContainer("detail_list")
+    updateData();
+})();
+
+//#endregion
+
+//#endregion
+
 // 温度折线图（定时器）
 (function () {
     // 配置温度折线图的选项
@@ -387,6 +572,62 @@ _G.refreshCurrentStatus = function (keys) {
         }]
     };
 
+    var 上次获取的最后时间 = '2024-01-01 00:00:00';  // 上次获取的最后时间
+
+    // 获取更多温度数据
+    function getMoreTemperature() {
+        if (_G.Status.最后启动时间_str == null) {
+            return;
+        }
+        if(option.xAxis.data.length == 0){
+            上次获取的最后时间 = _G.Status.最后启动时间_str;
+        }
+        $.ajax({
+            type: "GET",
+            url: "http://192.168.3.250:7790/biapiserver/getinfosintimerangeandcalctimespan",
+            data: {
+                dbName: 主数据库名称, // 需要获取的温度类型
+                equipmentUid: 设备Uid, // 设备的唯一标识符
+                afterDateTime: 上次获取的最后时间,
+                keys: '炉膛温度',
+                fromTime: _G.Status.最后启动时间_str,
+            }, // Parameters to send
+            dataType: "json",
+            success: function (data) {
+                var obj = JSON.parse(data.Data)
+
+                if (输出调试信息 === true) {
+                    console.log(obj)
+                }
+                for (let i = 0; i < obj.length; i++) {
+                    const element = obj[i];
+                    
+                }
+                addIntoChart(newData);
+
+                if (obj.length > 0) {
+                    上次获取的最后时间 = obj[obj.length - 1].GetTime.replace("T", " ");
+                }
+            },
+            error: function (error) {
+                console.error("Error fetching data:", error);
+            }
+        });
+    }
+
+    // 更新图表数据
+    function addIntoChart(newData) {
+        option.xAxis.data.push(newData.MinuteSpan); // 更新X轴数据（时间）
+        option.series[0].data.push(newData.Value); // 更新Y轴数据（温度）
+
+
+        // 保证图表显示的时间不会超过60个数据点
+        if (option.xAxis.data.length > 10) {
+            option.xAxis.data.shift(); // 删除最早的时间数据
+            option.series[0].data.shift();
+        }
+    }
+
     var myechart = echarts.init($('.line')[0]);  // 获取第一个图表容器并初始化图表
     myechart.setOption(option);  // 设置图表的配置项
 
@@ -403,15 +644,8 @@ _G.refreshCurrentStatus = function (keys) {
 
     // 每隔1秒获取一次数据并更新图表
     setInterval(function () {
-        var newData = getRealTimeData();  // 获取新的数据点
-        option.xAxis.data.push(newData.time);  // 更新X轴数据（时间）
-        option.series[0].data.push(newData.value);  // 更新Y轴数据（温度）
-
-        // 保证图表显示的时间不会超过60个数据点
-        if (option.xAxis.data.length > 30) {
-            option.xAxis.data.shift();  // 删除最早的时间数据
-            option.series[0].data.shift();  // 删除最早的温度数据
-        }
+        // var newData = getRealTimeData();  // 获取新的数据点
+        getMoreTemperature()
 
         // 更新图表
         myechart.setOption(option);
@@ -480,7 +714,7 @@ _G.refreshCurrentStatus = function (keys) {
         return Math.floor(Math.random() * 11) + 20;
     }
 
-    var maxDataPoints = 30;  // 每个选项卡最大可见数据点
+    var maxDataPoints = 10;  // 每个选项卡最大可见数据点
     var updateInterval = 1000;  // 更新间隔时间
 
     var data = {

@@ -30,7 +30,7 @@ a{
 }
 /*图标大小*/
 .icon-plane {
-  font-size: 20px;  /* 图标大小 */
+  font-size: 0.625rem;  /* 图标大小 */
 }
 /*基础布局*/
 .column{
@@ -104,31 +104,31 @@ a{
 	line-height: 1.05;
   }
 .monitor .col:nth-child(1) {
-  width: 3.2rem;
+  width: 20%;
   justify-content: center; /* 水平居中对齐 */
   align-items: center; /* 垂直居中对齐 */
   text-align: center;
   }
 .monitor .col:nth-child(2) {
-  width: 2.5rem;
+  width: 20%;
   justify-content: center; /* 水平居中对齐 */
   align-items: center; /* 垂直居中对齐 */
   text-align: center;
   }
 .monitor .col:nth-child(3) {
-  width: 4.8rem;
+  width: 60%;
   justify-content: center; /* 水平居中对齐 */
   align-items: center; /* 垂直居中对齐 */
   text-align: center;
   }
 .monitor .col:nth-child(4) {
-  width: 3.2rem;
+  width: 20%;
   justify-content: center; /* 水平居中对齐 */
   align-items: center; /* 垂直居中对齐 */
   text-align: center;
   }
 .monitor .col:nth-child(5) {
-  width: 3.2rem;
+  width: 40%;
   justify-content: center; /* 水平居中对齐 */
   align-items: center; /* 垂直居中对齐 */
   text-align: center;
