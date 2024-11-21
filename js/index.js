@@ -194,6 +194,7 @@ _G.获取最后启动时间 = function () {
         setInterval(() => {
             updateData();  // 使用新的数据更新页面上的显示
         }, 1000);  // 每 1 秒更新一次
+        updateData();
     });
 })();
 //#endregion
@@ -589,8 +590,14 @@ _G.获取最后启动时间 = function () {
         if (_G.Status.最后启动时间_str == null) {
             return;
         }
-        if(option.xAxis.data.length == 0){
+
+        var count;  // 要获取的数据条数
+        if (option.xAxis.data.length == 0) {
             上次获取的最后时间 = _G.Status.最后启动时间_str;
+            count = 10;
+        }
+        else {
+            count = 999;
         }
         $.ajax({
             type: "GET",
@@ -601,6 +608,7 @@ _G.获取最后启动时间 = function () {
                 afterDateTime: 上次获取的最后时间,
                 keys: '炉膛温度',
                 fromTime: _G.Status.最后启动时间_str,
+                count: 10,
             }, // Parameters to send
             dataType: "json",
             success: function (data) {
@@ -609,11 +617,12 @@ _G.获取最后启动时间 = function () {
                 if (输出调试信息 === true) {
                     console.log(obj)
                 }
-                for (let i = 0; i < obj.length; i++) {
+
+                //倒序追加数据到图表中
+                for (let i = obj.length - 1; i >= 0; i--) {
                     const element = obj[i];
-                    
+                    addIntoChart(element);
                 }
-                addIntoChart(newData);
 
                 if (obj.length > 0) {
                     上次获取的最后时间 = obj[obj.length - 1].GetTime.replace("T", " ");
@@ -641,16 +650,16 @@ _G.获取最后启动时间 = function () {
     var myechart = echarts.init($('.line')[0]);  // 获取第一个图表容器并初始化图表
     myechart.setOption(option);  // 设置图表的配置项
 
-    // 初始化时间和数据（模拟实时数据）
-    var time = 0;  // 时间（单位：秒）
-    var data = [];  // 实时数据数组
+    // // 初始化时间和数据（模拟实时数据）
+    // var time = 0;  // 时间（单位：秒）
+    // var data = [];  // 实时数据数组
 
-    // 模拟的温度数据生成函数（你可以将此部分替换为真实的温度数据）
-    function getRealTimeData() {
-        var newData = Math.floor(Math.random() * 100);  // 模拟一个温度数据
-        var newTime = (time++ * 30) + "分";  // 模拟每隔30分钟更新一次时间
-        return { time: newTime, value: newData };  // 返回一个新的时间和温度值
-    }
+    // // 模拟的温度数据生成函数（你可以将此部分替换为真实的温度数据）
+    // function getRealTimeData() {
+    //     var newData = Math.floor(Math.random() * 100);  // 模拟一个温度数据
+    //     var newTime = (time++ * 30) + "分";  // 模拟每隔30分钟更新一次时间
+    //     return { time: newTime, value: newData };  // 返回一个新的时间和温度值
+    // }
 
     // 每隔1秒获取一次数据并更新图表
     setInterval(function () {
@@ -660,6 +669,7 @@ _G.获取最后启动时间 = function () {
         // 更新图表
         myechart.setOption(option);
     }, 1000);  // 每隔1秒更新一次数据
+    getMoreTemperature()
 
     // 监听窗口大小变化，自动调整图表尺寸
     window.addEventListener('resize', function () {
