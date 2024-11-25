@@ -35,9 +35,29 @@ a{
   font-weight: bold; /* 设置字体加粗 */
   text-align: center; /* 居中对齐文本 */
   text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.5); /* 增加阴影以提升可读性 */
-  /*letter-spacing: 0.5em; !* 设置字母间距 *!*/
+  position: absolute; /* 使用绝对定位 */
+  top: 92vh; /* 将元素垂直定位到视口高度的90%处 */
+  padding: 1vh 2vh 0  5vh;
+  left: 50%; /* 水平居中 */
+  transform: translateX(-50%); /* 使用 transform 完成精确居中 */
+  letter-spacing: 0.5em; /* 设置字母间距 */
 }
 
+/* 为不同状态设置不同颜色 */
+.status-active {
+  color: green;
+  font-weight: bold;
+}
+
+.status-inactive {
+  color: red;
+  font-weight: bold;
+}
+
+.status-unknown {
+  color: gray;
+  font-weight: bold;
+}
 
 
 /*图标大小*/
@@ -85,10 +105,14 @@ a{
 	display: flex;
 	flex-direction: column;
   }
-.monitor .tabs{
-	padding: 0 2vh;
-	margin-bottom: 0.75rem;
-  }
+.monitor .tabs {
+  padding: 0 2vh; /* 设置左右内边距 */
+  margin-bottom: 0.75rem; /* 设置底部外边距 */
+  display: flex; /* 使用 flexbox 排列元素 */
+  align-items: center; /* 垂直居中对齐 */
+  justify-content: flex-start; /* 可以根据需要选择对齐方式，如居左、居中或居右 */
+}
+
 .monitor .tabs a{
 	color: #1950c4;
 	font-size: 0.75rem;
@@ -101,6 +125,13 @@ a{
 .monitor .tabs a.active{
 	color: #fff;
   }
+/*.monitor .tabs a.align-right {*/
+/*  display: flex; !* 启用 Flexbox 布局 *!*/
+/*  justify-content: flex-end; !* 水平居右对齐 *!*/
+/*  text-align: right; !* 可保留，如果需要对单行文本进行对齐 *!*/
+/*  width: 1%; !* 确保元素占满父容器的宽度，以便进行居右对齐 *!*/
+/*}*/
+
 .monitor .content{
 	flex: 1;
 	display: none;
@@ -263,7 +294,7 @@ a{
   font-size: 1.167rem;
   color: #fff;
 }
-.point span {
+.point .item span {
   display: block;
   color: #4c9bfd;
   font-size: 0.667rem;

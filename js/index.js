@@ -394,33 +394,42 @@ _G.refreshMinAndMaxTemperature = function () {
 (function () {
 
     function 转换状态文本(value) {
+        let text = "";
+        let colorClass = "";
+
         if (value == 0) {
-            return "进行";
+            text = "进行";
+            colorClass = "status-active";  // 给进行状态设置一个绿色的类
         } else if (value == 1) {
-            return "停止";
+            text = "停止";
+            colorClass = "status-inactive";  // 给停止状态设置一个红色的类
         } else {
-            return "未知";
+            text = "未知";
+            colorClass = "status-unknown";  // 给未知状态设置一个灰色的类
         }
+
+        // 返回带有颜色的 HTML
+        return `<span class="${colorClass}">${text}</span>`;
     }
 
     // 更新页面中的数据
     function updateData() {
         // 更新上区
-        document.getElementById('upStatus').innerHTML = `${转换状态文本(_G.Status.上区起停)}`
+        document.getElementById('upStatus').innerHTML = `${转换状态文本(_G.Status.上区起停)}`;
         document.getElementById('upPV').innerHTML = `${_G.Status.上区PV} <small>℃</small>`;
         document.getElementById('upSV').innerHTML = `${_G.Status.上区SV} <small>℃</small>`;
         document.getElementById('upOutput').innerHTML = `${_G.Status.上区MV} <small>%</small>`;
         document.getElementById('upTime').innerHTML = `${_G.Status.上区运行时间} <small>分钟</small>`;
 
         // 更新中区
-        document.getElementById('midStatus').innerHTML = `${转换状态文本(_G.Status.中区起停)}`
+        document.getElementById('midStatus').innerHTML = `${转换状态文本(_G.Status.中区起停)}`;
         document.getElementById('midPV').innerHTML = `${_G.Status.中区PV} <small>℃</small>`;
         document.getElementById('midSV').innerHTML = `${_G.Status.中区SV} <small>℃</small>`;
         document.getElementById('midOutput').innerHTML = `${_G.Status.中区MV} <small>%</small>`;
         document.getElementById('midTime').innerHTML = `${_G.Status.中区运行时间} <small>分钟</small>`;
 
         // 更新下区
-        document.getElementById('downStatus').innerHTML = `${转换状态文本(_G.Status.下区起停)}`
+        document.getElementById('downStatus').innerHTML = `${转换状态文本(_G.Status.下区起停)}`;
         document.getElementById('downPV').innerHTML = `${_G.Status.下区PV} <small>℃</small>`;
         document.getElementById('downSV').innerHTML = `${_G.Status.下区SV} <small>℃</small>`;
         document.getElementById('downOutput').innerHTML = `${_G.Status.下区MV} <small>%</small>`;
@@ -428,60 +437,13 @@ _G.refreshMinAndMaxTemperature = function () {
     }
 
     document.addEventListener('DOMContentLoaded', () => {
-
-        // // 模拟 API 返回的数据
-        // function simulateAPI() {
-        //     return {
-        //         // 随机生成各区的 PV、SV、输出和时间数据
-        //         upPV: Math.floor(Math.random() * (50 - 20 + 1)) + 20,  // 随机生成 20~50 之间的温度
-        //         upSV: Math.floor(Math.random() * (50 - 30 + 1)) + 30,  // 随机生成 30~50 之间的温度
-        //         upOutput: Math.floor(Math.random() * 100),  // 随机生成 0~100 之间的输出百分比
-        //         upTime: Math.floor(Math.random() * (20 - 10 + 1)) + 10,  // 随机生成 10~20 之间的时间（分钟）
-
-        //         midPV: Math.floor(Math.random() * (40 - 10 + 1)) + 10,  // 随机生成 10~40 之间的温度
-        //         midSV: Math.floor(Math.random() * (40 - 20 + 1)) + 20,  // 随机生成 20~40 之间的温度
-        //         midOutput: Math.floor(Math.random() * 100),  // 随机生成 0~100 之间的输出百分比
-        //         midTime: Math.floor(Math.random() * (20 - 10 + 1)) + 10,  // 随机生成 10~20 之间的时间（分钟）
-
-        //         downPV: Math.floor(Math.random() * (50 - 30 + 1)) + 30,  // 随机生成 30~50 之间的温度
-        //         downSV: Math.floor(Math.random() * (50 - 40 + 1)) + 40,  // 随机生成 40~50 之间的温度
-        //         downOutput: Math.floor(Math.random() * 100),  // 随机生成 0~100 之间的输出百分比
-        //         downTime: Math.floor(Math.random() * (20 - 10 + 1)) + 10,  // 随机生成 10~20 之间的时间（分钟）
-        //     };
-        // }
-
-        // // 更新页面中的数据
-        // function updateData(data) {
-        //     // 更新上区
-        //     document.getElementById('upPV').innerHTML = `${data.upPV} <small>℃</small>`;
-        //     document.getElementById('upSV').innerHTML = `${data.upSV} <small>℃</small>`;
-        //     document.getElementById('upOutput').innerHTML = `${data.upOutput} <small>%</small>`;
-        //     document.getElementById('upTime').innerHTML = `${data.upTime} <small>分钟</small>`;
-
-        //     // 更新中区
-        //     document.getElementById('midPV').innerHTML = `${data.midPV} <small>℃</small>`;
-        //     document.getElementById('midSV').innerHTML = `${data.midSV} <small>℃</small>`;
-        //     document.getElementById('midOutput').innerHTML = `${data.midOutput} <small>%</small>`;
-        //     document.getElementById('midTime').innerHTML = `${data.midTime} <small>分钟</small>`;
-
-        //     // 更新下区
-        //     document.getElementById('downPV').innerHTML = `${data.downPV} <small>℃</small>`;
-        //     document.getElementById('downSV').innerHTML = `${data.downSV} <small>℃</small>`;
-        //     document.getElementById('downOutput').innerHTML = `${data.downOutput} <small>%</small>`;
-        //     document.getElementById('downTime').innerHTML = `${data.downTime} <small>分钟</small>`;
-        // }
-
-        // // 每 5 秒钟模拟一次 API 调用并更新数据
-        // setInterval(() => {
-        //     const newData = simulateAPI();  // 获取新的数据
-        //     updateData(newData);  // 更新页面上的显示
-        // }, 1000);  // 每 5 秒更新一次
-
-        // 每 5 秒钟模拟一次 API 调用并更新数据
+        // 每 5 秒钟更新一次数据
         setInterval(() => {
             updateData();  // 更新页面上的显示
-        }, 1000);  // 每 5 秒更新一次
+        }, 1000);  // 每 1 秒更新一次
     });
+
+    // 初次加载时更新一次数据
     updateData();
 })();
 
