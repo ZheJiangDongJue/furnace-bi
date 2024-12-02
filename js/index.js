@@ -175,7 +175,7 @@ _G.refreshCurrentStatus = function (keys) {
 
     var 中区加热 = _G.stringToBoolean(_G.Status.中区加热X);
     //如果加热状态改变时间点离现在已经有5分钟了,且当前加热状态是false,则清空设备总运行时间
-    if (_G.GetTimeDiff(_G.StatusEx.加热状态改变的时间点) > (5 * 60 * 60) && 中区加热 == false) {
+    if (_G.GetTimeDiff(_G.StatusEx.加热状态改变的时间点) > (5 * 60) && 中区加热 == false) {
         _G.StatusEx.设备累积运行时间_秒 = 0;
     }
 
