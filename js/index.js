@@ -1,9 +1,9 @@
-//自调用函数
+﻿//自调用函数
 
 //#region 常量
-const 主数据库名称 = "PEM1"
-const IP = "192.168.3.250"
-const 端口 = 7790
+const 主数据库名称 = "ERPServerHongMao"
+const IP = "192.168.3.31"
+const 端口 = 7791
 const 地址 = `${IP}:${端口}`;
 
 const 设备id = 13;
@@ -37,7 +37,7 @@ _G.Status = {
     中区运行时间: 0,
     下区运行时间: 0,
     中区加热X: false,
-    真空泵X: false,
+    水泵X: false,
     冷风机X: false,
     //....更多其他参数
 }
@@ -45,12 +45,20 @@ _G.StatusEx = {
     //特殊
     最低温度: 0,
     最高温度: 0,
-    最后启动时间_str: null
+    设备累积运行时间_秒: 0,
+    设备总运行时间本次单次起始时间: null,
+    加热状态改变的时间点: new Date(),
+    最后启动时间_str: null,
+    最后完整烧炉的启动时间_str: null,
+    与Api的连接状态: false,
 }
 _G.isBoolean = function (value) {
     return typeof value === 'boolean';
 };
 _G.stringToBoolean = function (str) {
+    if (str === undefined || str === null) {
+        return false;
+    }
     if (_G.isBoolean(str)) {
         return str; // 如果已经是布尔值，则直接返回
     }
@@ -64,6 +72,18 @@ _G.stringToBoolean = function (str) {
             return undefined; // 或者抛出错误，取决于你的需求
     }
 };
+_G.TimeLabelFormatter = function (value, index) {
+    if (value === undefined) {
+        return '';
+    }
+    //传入分钟数，返回n时n分
+    var minute = value % 60;
+    var hour = (value - minute) / 60;
+    if (minute === 0) {
+        return hour + '时';
+    }
+    return hour + '时' + minute + '分';
+}
 _G.获取N天前的现在 = function (n) {
     const now = new Date();
     now.setDate(now.getDate() - n);
@@ -145,8 +165,27 @@ _G.HmsToMaxUnitType = function (hms) {
         return 1;
     }
 };
+//计算从某个时间到现在的时间差(秒)
+_G.GetTimeDiff = function (time) {
+    var timeDiff = Math.floor((new Date().getTime() - new Date(time).getTime()) / 1000);
+    return timeDiff;
+}
 //刷新当前状态
 _G.refreshCurrentStatus = function (keys) {
+
+    var 中区加热 = _G.stringToBoolean(_G.Status.中区加热X);
+    //如果加热状态改变时间点离现在已经有5分钟了,且当前加热状态是false,则清空设备总运行时间
+    if (_G.GetTimeDiff(_G.StatusEx.加热状态改变的时间点) > (5 * 60 * 60) && 中区加热 == false) {
+        _G.StatusEx.设备累积运行时间_秒 = 0;
+    }
+
+    // if (_G.StatusEx.最后启动时间_str == null) {
+    //     _G.Status.中区加热X = false;
+    //     _G.Status.水泵X = false;
+    //     _G.Status.冷风机X = false;
+    //     return;
+    // }
+
     $.ajax({
         type: "GET",
         url: `http://${地址}/biapiserver/getcurrentstatus`,
@@ -163,8 +202,50 @@ _G.refreshCurrentStatus = function (keys) {
 
             let result = keys.split(",");
             for (let i = 0; i < result.length; i++) {
-                _G.Status[result[i]] = obj[result[i]];
+                var 拉取的数据 = obj[result[i]]
+                //判断中区加热X变更
+                if (result[i] == "中区加热X") {
+                    var 中区加热 = _G.stringToBoolean(_G.Status.中区加热X);
+                    var 拉取的中区加热 = _G.stringToBoolean(拉取的数据);
+                    if (拉取的中区加热 != 中区加热) {
+                        _G.StatusEx.加热状态改变的时间点 = new Date();
+                        if (拉取的中区加热) {
+                            //中区加热开启
+                            if (_G.StatusEx.设备总运行时间本次单次起始时间 == null) {
+                                _G.StatusEx.设备总运行时间本次单次起始时间 = new Date();
+                            }
+                        } else {
+                            //中区加热关闭
+                            //_计算单次运行时间
+                            _G.StatusEx.设备累积运行时间_秒 += _G.GetTimeDiff(_G.StatusEx.设备总运行时间本次单次起始时间);
+                            _G.StatusEx.设备总运行时间本次单次起始时间 = null;
+                        }
+                    }
+                }
+                _G.Status[result[i]] = 拉取的数据;
             }
+        },
+        error: function (error) {
+            console.error("Error fetching data:", error);
+        }
+    });
+};
+_G.获取最后完整烧炉的启动时间 = function () {
+    $.ajax({
+        type: "GET",
+        url: `http://${地址}/biapiserver/getlaststarttime`,
+        data: {
+            equipmentUid: 设备Uid, // 设备的唯一标识符
+            afterDateTime: _G.getCurrentFormattedTime()
+        }, // Parameters to send
+        dataType: "json",
+        success: function (data) {
+            if (data === null) {
+                _G.StatusEx.最后完整烧炉的启动时间_str = null;
+                return;
+            }
+
+            _G.StatusEx.最后完整烧炉的启动时间_str = _G.convertDateStrToFormatDateStr(data);
         },
         error: function (error) {
             console.error("Error fetching data:", error);
@@ -181,6 +262,7 @@ _G.获取最后启动时间 = function () {
         }, // Parameters to send
         dataType: "json",
         success: function (data) {
+            _G.StatusEx.与Api的连接状态 = true;
 
             if (data === null) {
                 _G.StatusEx.最后启动时间_str = null;
@@ -190,6 +272,7 @@ _G.获取最后启动时间 = function () {
             _G.StatusEx.最后启动时间_str = _G.convertDateStrToFormatDateStr(data);
         },
         error: function (error) {
+            _G.StatusEx.与Api的连接状态 = false;
             console.error("Error fetching data:", error);
         }
     });
@@ -301,9 +384,21 @@ _G.refreshMinAndMaxTemperature = function () {
             let statusString = statusArray.join(",");
 
             _G.获取最后启动时间();
+            _G.获取最后完整烧炉的启动时间();
             _G.refreshCurrentStatus(statusString);
             // 刷新最小和最大温度
             _G.refreshMinAndMaxTemperature();
+
+            // 在获取最后启动时间中有更新连接状态
+            // 判断是否连接并设置id为"connect_watermark"的元素的显示状态(为防止卡顿,当连接状态改变时才更新)
+            if (_G.StatusEx.与Api的连接状态 != _G.StatusEx.与Api的连接状态_last) {
+                _G.StatusEx.与Api的连接状态_last = _G.StatusEx.与Api的连接状态;
+                if (_G.StatusEx.与Api的连接状态) {
+                    $("#connect_watermark").hide();
+                } else {
+                    $("#connect_watermark").show();
+                }
+            }
         }
 
         // 每 1 秒钟模拟一次 API 调用并更新数据
@@ -331,9 +426,9 @@ _G.refreshMinAndMaxTemperature = function () {
             heatingStatusElement.innerHTML = heatingStatus.text;
             heatingStatusElement.style.color = heatingStatus.color;
 
-            // 更新真空泵状态
+            // 更新水泵状态
             const vacuumPumpStatusElement = document.getElementById('vacuumPumpStatus');
-            const vacuumPumpStatus = statuses[_G.stringToBoolean(_G.Status.真空泵X)];
+            const vacuumPumpStatus = statuses[_G.stringToBoolean(_G.Status.水泵X)];
             vacuumPumpStatusElement.innerHTML = vacuumPumpStatus.text;
             vacuumPumpStatusElement.style.color = vacuumPumpStatus.color;
 
@@ -414,6 +509,12 @@ _G.refreshMinAndMaxTemperature = function () {
 
     // 更新页面中的数据
     function updateData() {
+        var 中区加热 = _G.stringToBoolean(_G.Status.中区加热X);
+        if (中区加热) {
+            var span = _G.secondsToHms(_G.StatusEx.设备累积运行时间_秒 + _G.GetTimeDiff(_G.StatusEx.设备总运行时间本次单次起始时间));
+            document.getElementById('device_run_time').innerHTML = `${_G.HmsToStr(span).result}`;
+        }
+
         // 更新上区
         document.getElementById('upStatus').innerHTML = `${转换状态文本(_G.Status.上区起停)}`;
         document.getElementById('upPV').innerHTML = `${_G.Status.上区PV} <small>℃</small>`;
@@ -577,7 +678,7 @@ _G.refreshMinAndMaxTemperature = function () {
 
 // 温度折线图（定时器）
 (function () {
-    const default_count = 10;
+    // const default_count = 10;
 
     // 配置温度折线图的选项
     var option = {
@@ -591,12 +692,28 @@ _G.refreshMinAndMaxTemperature = function () {
                 show: false  // 不显示刻度线
             },
             axisLabel: {
-                color: '#4c9bfd'  // X轴标签的颜色
+                formatter: _G.TimeLabelFormatter,
+                // formatter:"{value}",
+                // backgroundColor: '#000',
+                color: '#4c9bfd',  // X轴标签的颜色
+                interval: (index, value) => {
+                    const maxKey = Math.max(...Object.keys(option.series[0].data));
+                    if (index === 0 || index === maxKey) {
+                        return true;
+                    }
+                    //当刻度比其他刻度离maxKey更近时,隐藏当前刻度
+                    if (Math.abs(maxKey - index) < 20) {
+                        return false;
+                    }
+                    return value % 60 == 0 ? value : null;  // 每 60 分钟显示一个刻度
+                }
             },
             axisLine: {
                 show: false  // 不显示X轴的轴线
             },
-            boundaryGap: false  // 不留白
+            boundaryGap: false,  // 不留白
+            min: 0,  // X轴的最小值
+            max: 4 * 60,  // X轴的最大值
         },
         yAxis: {
             type: 'value',  // Y轴显示数值
@@ -604,7 +721,7 @@ _G.refreshMinAndMaxTemperature = function () {
                 show: false  // 不显示刻度线
             },
             axisLabel: {
-                color: '#4c9bfd'  // Y轴标签的颜色
+                color: '#4c9bfd',  // Y轴标签的颜色
             },
             axisLine: {
                 show: false  // 不显示Y轴的轴线
@@ -637,7 +754,7 @@ _G.refreshMinAndMaxTemperature = function () {
             markPoint: {
                 data: [
                     { type: 'max', name: 'Max' },  // 最大值标记
-                    { type: 'min', name: 'Min' }   // 最小值标记
+                    // { type: 'min', name: 'Min' }   // 最小值标记
                 ]
             },
             markLine: {
@@ -652,37 +769,15 @@ _G.refreshMinAndMaxTemperature = function () {
             }
         }]
     };
-    // 初始化数据
-    option.xAxis.data.push(0);
-    option.series[0].data.push(0);
 
-    var 上次获取的最后时间 = { date: 默认上次获取的最后时间 };  // 上次获取的最后时间
+    var 最后一次获取的时间 = { date: null };  // 最后一次获取的时间
+    var isShowLastData = false;
 
-    // 获取更多温度数据
-    function getMoreTemperature() {
-        if (_G.StatusEx.最后启动时间_str == null) {
-            return;
-        }
-
-        var count;  // 要获取的数据条数
-        if (option.xAxis.data.length <= 1) {
-            上次获取的最后时间.date = _G.StatusEx.最后启动时间_str;
-            count = default_count;
-        }
-        else {
-            count = 999;
-        }
+    function getMoreTemperatureForAjax(data) {
         $.ajax({
             type: "GET",
             url: `http://${地址}/biapiserver/getinfosintimerangeandcalctimespan`,
-            data: {
-                dbName: 主数据库名称, // 需要获取的温度类型
-                equipmentUid: 设备Uid, // 设备的唯一标识符
-                afterDateTime: 上次获取的最后时间.date,
-                keys: '炉膛温度',
-                fromTime: _G.StatusEx.最后启动时间_str,
-                count: default_count,
-            }, // Parameters to send
+            data: data, // Parameters to send
             dataType: "json",
             success: function (data) {
                 var obj = JSON.parse(data.Data)
@@ -691,48 +786,37 @@ _G.refreshMinAndMaxTemperature = function () {
                     console.log(obj)
                 }
 
-                //倒序追加数据到图表中
-                for (let i = obj.length - 1; i >= 0; i--) {
+                for (let i = 0; i < obj.length; i++) {
                     const element = obj[i];
+                    element.MinuteSpan = Number(element.MinuteSpan);
+                    option.xAxis.data[element.MinuteSpan] = element.MinuteSpan;
+                    option.series[0].data[element.MinuteSpan] = element.Value;
+                }
 
-                    if (globalOption.useTimeModeForChart == 0) {
-                        var hms = _G.secondsToHms(element.SecondSpan);
-                        var r = _G.HmsToStr(hms, 2);
-                        option.xAxis.data.push(r.result);
-                        option.series[0].data.push(element.Value);
+                //取option.xAxis.data的key最大值
+                const maxKey = Math.max(...Object.keys(option.series[0].data));
+                for (let i = 0; i <= maxKey; i++) {
+                    if (option.xAxis.data[i] === undefined) {
+                        option.xAxis.data[i] = i;
                     }
-                    else if (globalOption.useTimeModeForChart == 1) {
-                        var hms = _G.secondsToHms(element.SecondSpan);
-                        // var timeType = _G.HmsToMaxUnitType(time);
-                        var timeType;
-                        var maxUnitType = _G.HmsToMaxUnitType(hms);
-                        var result;
-                        if (maxUnitType == 1) {
-                            result = element.SecondSpan + "秒";
-                            timeType = 1;
-                        }
-                        else {
-                            result = Math.floor(element.SecondSpan / 60) + "分";
-                            timeType = 2;
-                        }
-                        option.xAxis.data.push(result); // 更新X轴数据（时间）
-                        option.series[0].data.push(element.Value); // 更新Y轴数据（温度）
+                    if (i > -1 && option.series[0].data[i] === undefined) {
+                        option.series[0].data[i] = option.series[0].data[i - 1];
                     }
                 }
 
-                // 保证图表显示的时间不会超过N个数据点
-                while (option.xAxis.data.length > default_count) {
-                    option.xAxis.data.shift(); // 删除最早的时间数据
-                    option.series[0].data.shift();
-                }
+                //更新X轴最大刻度
+                // option.xAxis.min = 0;
+                // option.xAxis.max = 4 * 60;
+                // option.xAxis.interval = 30; // 设置X轴间隔为30分钟
+                // option.xAxis.axisLabel.interval = 30; // 设置X轴标签显示刻度
 
-                //更新最小刻度
-                if (option.series[0].data.length > 0) {
-                    option.yAxis.min = Math.min.apply(null, option.series[0].data) - 1;
-                }
+                // //更新最小刻度
+                // if (option.series[0].data.length > 0) {
+                //     option.yAxis.min = Math.min.apply(null, option.series[0].data) - 1;
+                // }
 
                 if (obj.length > 0) {
-                    上次获取的最后时间.date = _G.convertDateStrToFormatDateStr(obj[0].GetTime.replace("T", " "));
+                    最后一次获取的时间.date = _G.convertDateStrToFormatDateStr(obj[0].GetTime.replace("T", " "));
                 }
             },
             error: function (error) {
@@ -741,19 +825,52 @@ _G.refreshMinAndMaxTemperature = function () {
         });
     }
 
+    function getMoreTemperature() {
+        if (_G.StatusEx.最后启动时间_str == null) {
+            if (!isShowLastData) {
+                isShowLastData = true;
+                getMoreTemperatureForAjax({
+                    dbName: 主数据库名称, // 需要获取的温度类型
+                    equipmentUid: 设备Uid, // 设备的唯一标识符
+                    afterDateTime: _G.StatusEx.最后完整烧炉的启动时间_str,
+                    keys: '炉膛温度',
+                    fromTime: _G.StatusEx.最后完整烧炉的启动时间_str,
+                    count: 99999,
+                });
+            }
+            return;
+        }
+        else {
+            if (isShowLastData) {
+                isShowLastData = false;
+                最后一次获取的时间.date = null; // 清空最后一次获取的时间
+                // option.xAxis.data = [0];
+                option.series[0].data = [0];
+                return;
+            }
+        }
+
+        if (最后一次获取的时间.date == null) {
+            最后一次获取的时间.date = _G.StatusEx.最后启动时间_str;
+            // option.xAxis.data = [0];
+            // option.series[0].data = [0];
+
+            for (let i = 0; i < 4 * 60; i++) {
+                option.xAxis.data[i] = i; // 更新X轴数据（时间）说
+            }
+        }
+        getMoreTemperatureForAjax({
+            dbName: 主数据库名称, // 需要获取的温度类型
+            equipmentUid: 设备Uid, // 设备的唯一标识符
+            afterDateTime: 最后一次获取的时间.date,
+            keys: '炉膛温度',
+            fromTime: _G.StatusEx.最后启动时间_str,
+            count: 99999,
+        });
+    }
+
     var myechart = echarts.init($('.line')[0]);  // 获取第一个图表容器并初始化图表
     myechart.setOption(option);  // 设置图表的配置项
-
-    // // 初始化时间和数据（模拟实时数据）
-    // var time = 0;  // 时间（单位：秒）
-    // var data = [];  // 实时数据数组
-
-    // // 模拟的温度数据生成函数（你可以将此部分替换为真实的温度数据）
-    // function getRealTimeData() {
-    //     var newData = Math.floor(Math.random() * 100);  // 模拟一个温度数据
-    //     var newTime = (time++ * 30) + "分";  // 模拟每隔30分钟更新一次时间
-    //     return { time: newTime, value: newData };  // 返回一个新的时间和温度值
-    // }
 
     // 每隔1秒获取一次数据并更新图表
     setInterval(function () {
@@ -763,7 +880,6 @@ _G.refreshMinAndMaxTemperature = function () {
         // 更新图表
         myechart.setOption(option);
     }, 1000);  // 每隔1秒更新一次数据
-    getMoreTemperature()
 
     // 监听窗口大小变化，自动调整图表尺寸
     window.addEventListener('resize', function () {
@@ -775,18 +891,11 @@ _G.refreshMinAndMaxTemperature = function () {
 (function () {
     const maxDataPoints = 10;  // 每个选项卡最大可见数据点
 
-    function getMoreTemperature(group, key, relativeTimeBaseValue) {
+    function getMoreTemperatureForAjax(group, key, data) {
         $.ajax({
             type: "GET",
             url: `http://${地址}/biapiserver/getinfosintimerangeandcalctimespan`,
-            data: {
-                dbName: 主数据库名称, // 需要获取的温度类型
-                equipmentUid: 设备Uid, // 设备的唯一标识符
-                afterDateTime: group[key].上次获取的最后时间,
-                keys: group[key].Keys,
-                fromTime: relativeTimeBaseValue,
-                count: maxDataPoints,
-            }, // Parameters to send
+            data: data, // Parameters to send
             dataType: "json",
             success: function (data) {
                 var obj = JSON.parse(data.Data)
@@ -795,92 +904,92 @@ _G.refreshMinAndMaxTemperature = function () {
                     console.log(obj)
                 }
 
-                if (globalOption.useTimeModeForChart == 0) {
-                    //倒序追加数据到图表中
-                    for (let i = obj.length - 1; i >= 0; i--) {
-                        const element = obj[i];
-                        var hms = _G.secondsToHms(element.SecondSpan);
-                        // var timeType = _G.HmsToMaxUnitType(time);
-                        var r = _G.HmsToStr(hms, 2);
-                        group[key].xData.push(r.result);
-                        group[key].yData.push(element.Value);
-                        // group[key].helperData.push({
-                        //     timeType: timeType,
-                        // });
-
-                        group[key].最大单位 = r.type;
-                    }
+                for (let i = 0; i < obj.length; i++) {
+                    const element = obj[i];
+                    element.MinuteSpan = Number(element.MinuteSpan);
+                    group[key].xData[element.MinuteSpan] = element.MinuteSpan;
+                    group[key].yData[element.MinuteSpan] = element.Value;
                 }
-                else if (globalOption.useTimeModeForChart == 1) {
-                    //倒序追加数据到图表中
-                    for (let i = obj.length - 1; i >= 0; i--) {
-                        const element = obj[i];
-                        var hms = _G.secondsToHms(element.SecondSpan);
-                        // var timeType = _G.HmsToMaxUnitType(time);
-                        var timeType;
-                        var maxUnitType = _G.HmsToMaxUnitType(hms);
-                        var result;
-                        if (maxUnitType == 1) {
-                            result = element.SecondSpan + "秒";
-                            timeType = 1;
-                        }
-                        else {
-                            result = Math.floor(element.SecondSpan / 60) + "分";
-                            timeType = 2;
-                        }
-                        group[key].xData.push(result);
-                        group[key].yData.push(element.Value);
-                        // group[key].helperData.push({
-                        //     timeType: timeType,
-                        // });
 
-                        group[key].最大单位 = timeType;
+                //取group[key].xData的key最大值
+                const maxKey = Math.max(...Object.keys(group[key].yData));
+                for (let i = 0; i <= maxKey; i++) {
+                    if (group[key].xData[i] === undefined) {
+                        group[key].xData[i] = i;
                     }
-                }
-                else {
-                    //倒序追加数据到图表中
-                    for (let i = obj.length - 1; i >= 0; i--) {
-                        const element = obj[i];
-                        var hms = _G.secondsToHms(element.SecondSpan);
-                        // var timeType = _G.HmsToMaxUnitType(time);
-                        group[key].xData.push(hms.Time);
-                        group[key].yData.push(element.Value);
-                        // group[key].helperData.push({
-                        //     timeType: timeType,
-                        // });
-
-                        // group[key].最大单位 = timeType;
+                    if (i > -1 && group[key].yData[i] === undefined) {
+                        group[key].yData[i] = group[key].yData[i - 1];
                     }
                 }
 
-                // if (obj.length == 0) {
-                //     //没有获得任何数据也要添加一个,时间是当前时间,数值复制最后一个
-                //     group[key].xData.push(_G.getCurrentFormattedTime());
-                //     group[key].yData.push(group[key].yData[group[key].yData.length - 1]);
-                // }
+                //更新X轴最大刻度
+                // option.xAxis.min = 0;
+                // option.xAxis.max = 4 * 60;
+                // option.xAxis.interval = 30; // 设置X轴间隔为30分钟
+                // option.xAxis.axisLabel.interval = 0; // 设置X轴标签显示所有刻度
 
-                // 确保数据不会超过 maxDataPoints
-                while (group[key].xData.length > maxDataPoints) {
-                    group[key].xData.shift();
-                    group[key].yData.shift();
-                    // group[key].helperData.shift();
-                }
-
-                // group[key].当前最大单位占用总个数 = 0;
-                // for (let i = 0; i < group[key].helperData.length; i++) {
-                //     const element = group[key].helperData[i];
-                //     if (element.timeType) {
-                //         group[key].当前最大单位占用总个数++;
-                //     }
+                // //更新最小刻度
+                // if (option.series[0].data.length > 0) {
+                //     option.yAxis.min = Math.min.apply(null, option.series[0].data) - 1;
                 // }
 
                 if (obj.length > 0) {
-                    group[key].上次获取的最后时间 = _G.convertDateStrToFormatDateStr(obj[0].GetTime.replace("T", " "));
+                    group[key].最后一次获取的时间 = _G.convertDateStrToFormatDateStr(obj[0].GetTime.replace("T", " "));
                 }
             },
             error: function (error) {
                 console.error("Error fetching data:", error);
             }
+        });
+    }
+
+    function getMoreTemperature(group, key, relativeTimeBaseValue) {
+        if (_G.StatusEx.最后启动时间_str == null) {
+            if (!group[key].isShowLastData) {
+                group[key].isShowLastData = true;
+
+                getMoreTemperatureForAjax(group, key, {
+                    dbName: 主数据库名称, // 需要获取的温度类型
+                    equipmentUid: 设备Uid, // 设备的唯一标识符
+                    afterDateTime: _G.StatusEx.最后完整烧炉的启动时间_str,
+                    keys: group[key].Keys,
+                    fromTime: _G.StatusEx.最后完整烧炉的启动时间_str,
+                    count: 99999,
+                });
+            }
+            return;
+        }
+        else {
+            if (group[key].isShowLastData) {
+                group[key].isShowLastData = false;
+                group[key].最后一次获取的时间 = null; // 清空最后一次获取的时间
+                // option.xAxis.data = [0];
+                option.series[0].data = [0];
+                return;
+            }
+        }
+
+        if (_G.StatusEx.最后启动时间_str == null) {
+            return;
+        }
+
+        // 如果group[key].最后一次获取的时间为空
+        if (group[key].最后一次获取的时间 == null) {
+            // 将group[key].最后一次获取的时间设置为_G.StatusEx.最后启动时间_str
+            group[key].最后一次获取的时间 = _G.StatusEx.最后启动时间_str;
+
+            // group[key].xData = [0];
+
+            // 将group[key].yData设置为[0]
+            group[key].yData = [0];
+        }
+        getMoreTemperatureForAjax(group, key, {
+            dbName: 主数据库名称, // 需要获取的温度类型
+            equipmentUid: 设备Uid, // 设备的唯一标识符
+            afterDateTime: group[key].最后一次获取的时间,
+            keys: group[key].Keys,
+            fromTime: relativeTimeBaseValue,
+            count: 99999,
         });
     }
 
@@ -891,9 +1000,25 @@ _G.refreshMinAndMaxTemperature = function () {
             type: 'category',
             data: [],
             axisTick: { show: false },
-            axisLabel: { color: '#4c9bfd' },
+            axisLabel: {
+                formatter: _G.TimeLabelFormatter,
+                color: '#4c9bfd',
+                interval: (index, value) => {
+                    const maxKey = Math.max(...Object.keys(option.series[0].data));
+                    if (index === 0 || index === maxKey) {
+                        return true;
+                    }
+                    //当刻度比其他刻度离maxKey更近时,隐藏当前刻度
+                    if (Math.abs(maxKey - index) < 20) {
+                        return false;
+                    }
+                    return value % 60 == 0 ? value : null;  // 每 60 分钟显示一个刻度
+                }
+            },
             axisLine: { show: false },
-            boundaryGap: false
+            boundaryGap: false,
+            min: 0,  // X轴的最小值
+            max: 4 * 60,  // X轴的最大值
         },
         yAxis: {
             type: 'value',
@@ -949,12 +1074,16 @@ _G.refreshMinAndMaxTemperature = function () {
 
     Object.keys(data).forEach(key => {
         data[key].Keys = "";
-        data[key].xData = [];
-        data[key].yData = [];
-        data[key].helperData = [];
-        data[key].上次获取的最后时间 = 默认上次获取的最后时间;
-        data[key].最大单位 = 0;
-        data[key].当前最大单位占用总个数 = 0;
+        // data[key].xData = [0];
+        data[key].yData = [0];
+        // data[key].helperData = [];
+        data[key].最后一次获取的时间 = null;
+        data[key].isShowLastData = false;
+        // data[key].最大单位 = 0;
+        // data[key].当前最大单位占用总个数 = 0;
+        for (let i = 0; i < 4 * 60; i++) {
+            data[key].xData[i] = i; // 更新X轴数据（时间）说
+        }
     })
 
     data.up.Keys = "上区PV";
@@ -1002,10 +1131,6 @@ _G.refreshMinAndMaxTemperature = function () {
     }
 
     setInterval(function () {
-        if (_G.StatusEx.最后启动时间_str == null) {
-            return;
-        }
-
         Object.keys(data).forEach(key => {
             getMoreTemperature(data, key, _G.StatusEx.最后启动时间_str)
         })

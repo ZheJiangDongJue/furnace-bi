@@ -1,0 +1,25 @@
+.watermark {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  pointer-events: none;
+  /* 避免水印遮挡下方元素的交互 */
+  z-index: 9999;
+  /* 确保水印在最上层 */
+}
+
+.watermark-text {
+  font-size: 64px;
+  color: rgba(255, 255, 255, 0.2);
+  /* 设置透明度 */
+  -webkit-user-select: none;
+  /* 禁止选中文字 */
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+}

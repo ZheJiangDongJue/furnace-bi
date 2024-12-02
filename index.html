@@ -7,8 +7,9 @@
     <meta http-equiv="X-UA-Compatible" content="ie=edge" />
     <title>可视化平台</title>
     <link rel="stylesheet" href="./css/index.css" />
+    <link rel="stylesheet" href="./css/float.css" />
     <link rel="stylesheet" href="./fonts/icomoon.css" />
-    
+
     <META HTTP-EQUIV="pragma" CONTENT="no-cache">
     <META HTTP-EQUIV="Cache-Control" CONTENT="no-cache, must-revalidate">
     <META HTTP-EQUIV="expires" CONTENT="0">
@@ -22,6 +23,12 @@
             <div class="wrap">
                 <!--区块状态-->
                 <div class="channel panel">
+                    <div class="left_title">
+                        <div class="stack_layout">
+                            <a class="text">设备总运行时间:</a>
+                            <a class="text" id="device_run_time">0</a>
+                        </div>
+                    </div>
                     <div class="inner">
                         <h3>模块状态</h3>
                         <div class="chart">
@@ -37,7 +44,7 @@
                             <div class="item">
                                 <span>
                                     <i class="icon-stopwatch"></i>
-                                    真空泵
+                                    水泵
                                 </span>
                                 <h4 id="vacuumPumpStatus">初始</h4>
                                 <!-- 用 id 标识动态更新内容 -->
@@ -125,7 +132,7 @@
                             <!-- 用 id 来动态更新 -->
                             <span>
                                 <i class="icon-clock"></i>
-                                时间
+                                本次运行时间
                             </span>
                         </div>
                     </div>
@@ -170,7 +177,7 @@
                             <!-- 用 id 来动态更新 -->
                             <span>
                                 <i class="icon-clock"></i>
-                                时间
+                                本次运行时间
                             </span>
                         </div>
                     </div>
@@ -215,7 +222,7 @@
                             <!-- 用 id 来动态更新 -->
                             <span>
                                 <i class="icon-clock"></i>
-                                时间
+                                本次运行时间
                             </span>
                         </div>
                     </div>
@@ -229,13 +236,13 @@
                 <div class="inner">
                     <div class="tabs">
                         <a href="javascript:;" data-index="0" class="active">生产实时明细</a>
-<!--                        <a href="javascript:;" data-index="0" class="align-right">-->
-<!--                            <a>退火炉</a>-->
-<!--                            <a>末次时间：</a>-->
-<!--                            <a>2024.11.25 13:30</a>-->
-<!--                            <a>~</a>-->
-<!--                            <a>2024.11.25 17:00</a>-->
-<!--                        </a>-->
+                        <!--                        <a href="javascript:;" data-index="0" class="align-right">-->
+                        <!--                            <a>退火炉</a>-->
+                        <!--                            <a>末次时间：</a>-->
+                        <!--                            <a>2024.11.25 13:30</a>-->
+                        <!--                            <a>~</a>-->
+                        <!--                            <a>2024.11.25 17:00</a>-->
+                        <!--                        </a>-->
 
                     </div>
                     <div class="content" style="display: block">
@@ -289,6 +296,9 @@
         </div>
     </div>
     <div class="center-text">浙江东爵线缆有限公司</div>
+    <div id="connect_watermark" class="watermark">
+        <span class="watermark-text">暂未连接到服务器</span>
+    </div>
 </body>
 
 <script src="./node_modules/jquery/dist/jquery.min.js"></script>

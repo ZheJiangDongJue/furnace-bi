@@ -28,6 +28,27 @@ a{
     height: 90vh;
 }
 
+/*左侧头部*/
+.left_title {
+  position: absolute;
+  top: -4rem;
+  left: -3.5rem;
+  width: 17rem;
+  border-color: #60c5e9;
+  border-radius: 1rem;
+  border-top-left-radius: 0;
+  border-bottom-right-radius: 0;
+  border-style: dashed;
+  border-top-width: 0;
+  border-bottom-width: 0;
+  text-align: center;
+}
+
+.left_title .text{
+  color: white;
+  font-size: 1.1rem;
+}
+
 /*尾文字设置*/
 .center-text {
   color: white; /* 设置文字颜色 */
