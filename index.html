@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" id="root">
 
 <head>
     <meta charset="UTF-8" />
@@ -8,6 +8,7 @@
     <title>可视化平台</title>
     <link rel="stylesheet" href="./css/index.css" />
     <link rel="stylesheet" href="./css/float.css" />
+    <link rel="stylesheet" href="./css/colors.css" />
     <link rel="stylesheet" href="./fonts/icomoon.css" />
 
     <META HTTP-EQUIV="pragma" CONTENT="no-cache">
@@ -25,7 +26,6 @@
                 <div class="channel panel">
                     <div class="left_title">
                         <div class="stack_layout">
-                            <a class="text">设备总运行时间:</a>
                             <a class="text" id="device_run_time">0</a>
                         </div>
                     </div>
@@ -247,14 +247,15 @@
                     </div>
                     <div class="content" style="display: block">
                         <div class="head">
-                            <span class="col">物料编码</span>
-                            <span class="col">物料名称</span>
-                            <span class="col">规格型号</span>
-                            <span class="col">所在区域</span>
-                            <span class="col">启动时间</span>
-                            <!-- <span class="col">状态</span> -->
+                            <span class="col code">物料编码</span>
+                            <span class="col name">物料名称</span>
+                            <span class="col specType">规格型号</span>
+                            <span class="col component">组件名称</span>
+                            <span class="col region">所在区域</span>
+                            <span class="col startTime">启动时间</span>
+                            <span class="col status">执行状态</span>
                         </div>
-                        <div class="marquee-view">
+                        <div id="detail_list_viewport" class="marquee-view">
                             <div id="detail_list" class="marquee"></div>
                         </div>
                     </div>
@@ -295,7 +296,7 @@
             </div>
         </div>
     </div>
-    <div class="center-text">浙江东爵线缆有限公司</div>
+    <div class="center-text">浙江东爵线缆欢迎你</div>
     <div id="connect_watermark" class="watermark">
         <span class="watermark-text">暂未连接到服务器</span>
     </div>
@@ -304,6 +305,7 @@
 <script src="./node_modules/jquery/dist/jquery.min.js"></script>
 <script src="./node_modules/echarts/dist/echarts.min.js"></script>
 
+<script src="./js/api.js"></script>
 <script src="./js/index.js"></script>
 
 </html>

@@ -3,17 +3,13 @@
 //#region 常量
 const 主数据库名称 = "ERPServerHongMao"
 const IP = "192.168.3.31"
-const 端口 = 7791
+const 端口 = 7790
 const 地址 = `${IP}:${端口}`;
 
-const 设备id = 13;
+const 设备id = 1;
 const 设备Uid = 44110607986693;
-const 默认上次获取的最后时间 = '2024-01-01 00:00:00'
 
 const 输出调试信息 = false;
-const globalOption = {
-    useTimeModeForChart: 0,  // 0:以分秒推进，1:以分钟推进
-}
 
 //#endregion
 
@@ -117,6 +113,18 @@ _G.convertDateStrToFormatDateStr = function (date_str) {
     const seconds = String(date.getSeconds()).padStart(2, '0');
 
     return `${year}-${month}-${day} ${hours}:${minutes}:${seconds}`;
+};
+//转换时间格式字符串为简单的时间字符串(24/12/18 11:11)
+_G.convertDateStrToSimpleFormatDateStr = function (date_str) {
+
+    var date = new Date(date_str);
+    const year = date.getFullYear();
+    const month = String(date.getMonth() + 1).padStart(2, '0'); // 月份从0开始，需要加1，并补零
+    const day = String(date.getDate()).padStart(2, '0');
+    const hours = String(date.getHours()).padStart(2, '0');
+    const minutes = String(date.getMinutes()).padStart(2, '0');
+
+    return `${year.toString().slice(-2)}/${month}/${day} ${hours}:${minutes}`;
 };
 //转换时间为时间字符串
 _G.convertDateToFormatDateStr = function (date) {
@@ -227,6 +235,9 @@ _G.refreshCurrentStatus = function (keys) {
         },
         error: function (error) {
             console.error("Error fetching data:", error);
+
+            // 如果连接失败，则设置与Api的连接状态为false
+            _G.StatusEx.与Api的连接状态 = false;
         }
     });
 };
@@ -503,16 +514,24 @@ _G.refreshMinAndMaxTemperature = function () {
             colorClass = "status-unknown";  // 给未知状态设置一个灰色的类
         }
 
+        // 如果连接状态为false，则设置为红色
+        if(!_G.StatusEx.与Api的连接状态){
+            colorClass = "status-inactive";
+            text = "访问失败";
+        }
+
         // 返回带有颜色的 HTML
         return `<span class="${colorClass}">${text}</span>`;
     }
 
     // 更新页面中的数据
     function updateData() {
-        var 中区加热 = _G.stringToBoolean(_G.Status.中区加热X);
-        if (中区加热) {
-            var span = _G.secondsToHms(_G.StatusEx.设备累积运行时间_秒 + _G.GetTimeDiff(_G.StatusEx.设备总运行时间本次单次起始时间));
-            document.getElementById('device_run_time').innerHTML = `${_G.HmsToStr(span).result}`;
+        if(_G.StatusEx.与Api的连接状态){
+            var span = _G.secondsToHms(_G.StatusEx.设备累积运行时间_秒 + _G.GetTimeDiff(_G.StatusEx.最后启动时间_str ?? new Date()));
+            document.getElementById('device_run_time').innerHTML = `设备总运行时间:${_G.HmsToStr(span).result}`;
+        }
+        else{
+            document.getElementById('device_run_time').innerHTML = `访问失败`;
         }
 
         // 更新上区
@@ -553,7 +572,7 @@ _G.refreshMinAndMaxTemperature = function () {
 //#region 明细列表
 (function () {
 
-    var 获取到的最后时间 = { date: _G.convertDateToFormatDateStr(_G.获取N天前的现在(15)) };
+    // var 获取到的最后时间 = { date: _G.convertDateToFormatDateStr(_G.获取N天前的现在(15)) };
 
     function createRow(data) {
         const newRow = document.createElement('div');
@@ -574,13 +593,37 @@ _G.refreshMinAndMaxTemperature = function () {
                 break;
         }
 
+        var status_str = "";
+        var status_color = "";
+        switch (data.status) {
+            case -1:
+                status_str = "计算中";
+                status_color = "color-gray";
+                break;
+            case 0:
+                status_str = "未开始";
+                status_color = "color-red";
+                break;
+            case 1:
+                status_str = "进行中";
+                status_color = "color-orange";
+                break;
+            case 2:
+                status_str = "已完成";
+                status_color = "color-green";
+                break;
+        }
+
         let newDateString = data.EquipmentStartTime.replace("T", " ");
+        newDateString = _G.convertDateStrToSimpleFormatDateStr(newDateString);
         newRow.innerHTML = `
-        <span class="col">${data.MaterialCode}</span>
-        <span class="col">${data.MaterialName}</span>
-        <span class="col">${data.MaterialSpecType}</span>
-        <span class="col">${区域}</span>
-        <span class="col">${newDateString}</span>
+        <span class="col code">${data.MaterialCode}</span>
+        <span class="col name">${data.MaterialName}</span>
+        <span class="col specType">${data.MaterialSpecType}</span>
+        <span class="col component">${data.EquipmentComponentName}</span>
+        <span class="col region">${区域}</span>
+        <span class="col startTime">${newDateString}</span>
+        <span class="col status ${status_color}">${status_str}</span>
         <span class="icon-dot"></span>`;
         return newRow;
     }
@@ -626,7 +669,8 @@ _G.refreshMinAndMaxTemperature = function () {
             data: {
                 dbName: 主数据库名称, // 需要获取的温度类型
                 equipmentid: 设备id, // 设备的唯一标识符
-                lastTime: 获取到的最后时间.date,
+                // lastTime: 获取到的最后时间.date,
+                lastTime: _G.convertDateToFormatDateStr(_G.获取N天前的现在(15)),
             }, // Parameters to send
             dataType: "json",
             success: function (data) {
@@ -636,13 +680,42 @@ _G.refreshMinAndMaxTemperature = function () {
                     console.log(obj)
                 }
 
+                var 最后启动时间_无论是否结束 = _G.StatusEx.最后启动时间_str ?? _G.StatusEx.最后完整烧炉的启动时间_str;
+                obj.forEach(element => {
+                    var status = -1;
+                    if (最后启动时间_无论是否结束 == null) {
+                        status = -1;//...
+                    }
+                    else if (element.eedid == null) {
+                        status = 0;//未开始
+                    }
+                    else if (element.EquipmentStartTime < _G.StatusEx.最后完整烧炉的启动时间_str) {
+                        status = 2;//已完成
+                    }
+                    else if(element.EquipmentStartTime > _G.StatusEx.最后启动时间_str){
+                        status = 1;//进行中
+                    }
+                    // else if(_G.StatusEx.最后完整烧炉的启动时间_str != null && _G.StatusEx.最后完整烧炉的启动时间_str > element.EquipmentStartTime){
+                    //     status = 1;//进行中
+                    // }
+                    // else {
+                    //     status = 1;//进行中
+                    // }
+                    else {
+                        status = 0;//未开始
+                    }
+                    element.status = status;
+                });
+
+                clearContainer('detail_list');
+
                 for (var i = obj.length - 1; i >= 0; i--) {
                     insertRowAtBeginning('detail_list', obj[i]);
                 }
 
-                if (obj.length > 0) {
-                    获取到的最后时间.date = obj[obj.length - 1].EquipmentStartTime.replace("T", " ");
-                }
+                // if (obj.length > 0) {
+                //     获取到的最后时间.date = obj[0].ApprovalTime.replace("T", " ");
+                // }
             },
             error: function (error) {
                 console.error("Error fetching data:", error);
@@ -653,6 +726,50 @@ _G.refreshMinAndMaxTemperature = function () {
     // 更新页面中的数据
     function updateData() {
         getLastDetailOfThisDevice(); // 获取最新的数据
+    }
+
+    function 判定明细滚动或者不滚动(){
+        // const viewportWidth = window.innerWidth;
+        const viewportHeight = window.innerHeight;
+
+        // console.log("Viewport Width:", viewportWidth);
+        // console.log("Viewport Height:", viewportHeight);
+
+        var detail_list_viewport = document.getElementById("detail_list_viewport")
+        
+        // const width = element.clientWidth;
+        const detail_list_viewport_height = detail_list_viewport.clientHeight;
+
+        // // console.log("Width: " + width + ", Height: " + height);
+
+        var root = document.getElementById("root");
+        var rootFontsize = root.style.fontSize;
+        // console.log("fontsize: "+root.style.fontSize);
+
+        var rootFontsize = rootFontsize.replace("px", "");
+        var rowFontSize = rootFontsize * 0.5; // 根据根元素的字体大小计算字体大小
+        var rowLineHeight = rowFontSize * 1.05; // 根据根元素的字体大小计算行高
+        var row1vh = viewportHeight / 100 * 1;
+        var rowResultHeight = row1vh * 2 + rowLineHeight;
+        // console.log("rowHeight: "+rowResultHeight);
+
+        const parent = document.getElementById('detail_list');
+        var count = parent.childElementCount;
+        // console.log(count);
+
+        var 可容纳行数 = Math.floor(detail_list_viewport_height / rowResultHeight);
+
+        if (count > 可容纳行数) {
+            // 设置自动滚动
+            if (!parent.classList.contains("marquee")) {
+                parent.classList.add("marquee")
+            }
+        }
+        else{
+            if (parent.classList.contains("marquee")) {
+                parent.classList.remove("marquee")
+            }
+        }
     }
 
     document.addEventListener('DOMContentLoaded', () => {
@@ -666,10 +783,12 @@ _G.refreshMinAndMaxTemperature = function () {
         // 每 5 秒钟模拟一次 API 调用并更新数据
         setInterval(() => {
             updateData();  // 更新页面上的显示
+            判定明细滚动或者不滚动();
         }, 5000);  // 每 5 秒更新一次
     });
     clearContainer("detail_list")
     updateData();
+    判定明细滚动或者不滚动();
 })();
 
 //#endregion
@@ -757,11 +876,11 @@ _G.refreshMinAndMaxTemperature = function () {
                     // { type: 'min', name: 'Min' }   // 最小值标记
                 ]
             },
-            markLine: {
-                data: [
-                    { type: 'average', name: 'Avg' }  // 平均值标记
-                ]
-            },
+            // markLine: {
+            //     data: [
+            //         { type: 'average', name: 'Avg' }  // 平均值标记
+            //     ]
+            // },
             label: {
                 show: true,  // 显示数据点的标签
                 position: 'top',  // 标签位置在数据点上方
@@ -1047,7 +1166,7 @@ _G.refreshMinAndMaxTemperature = function () {
             smooth: true,
             itemStyle: { color: '#0047f8' },
             markPoint: { data: [{ type: 'max', name: 'Max' }, { type: 'min', name: 'Min' }] },
-            markLine: { data: [{ type: 'average', name: 'Avg' }] },
+            // markLine: { data: [{ type: 'average', name: 'Avg' }] },
             label: {
                 show: true,
                 position: 'top',

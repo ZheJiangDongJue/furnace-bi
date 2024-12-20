@@ -1,0 +1,35 @@
+.color-red {
+    color: red;
+}
+
+.color-green {
+    color: green;
+}
+
+.color-orange {
+    color: orange;
+}
+
+.outlined-text-black {
+    text-shadow:
+        /* 上左 */
+        -1px -1px 0 #000,
+        /* 上右 */
+        1px -1px 0 #000,
+        /* 下左 */
+        -1px 1px 0 #000,
+        /* 下右 */
+        1px 1px 0 #000;
+}
+
+.outlined-text-white {
+    text-shadow:
+        /* 上左 */
+        -1px -1px 0 #FFF,
+        /* 上右 */
+        1px -1px 0 #FFF,
+        /* 下左 */
+        -1px 1px 0 #FFF,
+        /* 下右 */
+        1px 1px 0 #FFF;
+}

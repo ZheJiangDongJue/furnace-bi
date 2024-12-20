@@ -167,35 +167,31 @@ a{
 	justify-content: space-between;
 	line-height: 1.05;
   }
-.monitor .col:nth-child(1) {
+.monitor .col{
+	justify-content: center; /* 水平居中对齐 */
+	align-items: center; /* 垂直居中对齐 */
+	text-align: center;
+}
+.monitor .code {
   width: 20%;
-  justify-content: center; /* 水平居中对齐 */
-  align-items: center; /* 垂直居中对齐 */
-  text-align: center;
   }
-.monitor .col:nth-child(2) {
+.monitor .name {
   width: 20%;
-  justify-content: center; /* 水平居中对齐 */
-  align-items: center; /* 垂直居中对齐 */
-  text-align: center;
   }
-.monitor .col:nth-child(3) {
+.monitor .specType {
   width: 60%;
-  justify-content: center; /* 水平居中对齐 */
-  align-items: center; /* 垂直居中对齐 */
-  text-align: center;
   }
-.monitor .col:nth-child(4) {
+.monitor .component {
   width: 20%;
-  justify-content: center; /* 水平居中对齐 */
-  align-items: center; /* 垂直居中对齐 */
-  text-align: center;
   }
-.monitor .col:nth-child(5) {
+.monitor .region {
+  width: 20%;
+  }
+.monitor .startTime {
   width: 40%;
-  justify-content: center; /* 水平居中对齐 */
-  align-items: center; /* 垂直居中对齐 */
-  text-align: center;
+  }
+.monitor .status {
+  width: 20%;
   }
 .monitor .marquee-view{
   position: absolute;
@@ -225,47 +221,21 @@ a{
   left: 0.64rem;
   opacity: 0;
 }
-.monitor .marquee-view{
-	position: absolute;
-	top: 1.6rem;
-	bottom: 0;
-	width: 100%;
-	overflow: hidden;
-  }
-.monitor .row{
-	line-height: 1.05;
-	padding: 1vh 2vh;
-	color: #61a8ff;
-	font-size: 0.5rem;
-	position: relative;
-	display: flex;
-	justify-content: space-between;
-  }
-.monitor .row:hover{
-	color:#68d8ff;
-	background: rgba(255, 255, 255, 0.1);
-  }
-.monitor .row:hover .icon-dot{
-	opacity: 1;
-  }
-.monitor .icon-dot{
-	position: absolute;
-	left: 0.64rem;
-	opacity: 0;
-}
-
 
 /* 动画 */
-@keyframes row{
-  0%{}
+@keyframes autoScroll{
+  /* 0%{
+  }
   100%{
     transform: translateY(-50%);
-  }
+  } */
+  from{ transform: translateY(100vh); }
+  to{ transform: translateY(-100%); }
 }
 /* 调用动画 */
 .monitor .marquee {
   /* //infinite永久调用动画 */
-  animation: row  10s linear infinite;
+  animation: autoScroll  10s linear infinite;
 }
 /*鼠标划入 停止动画  */
 .monitor .marquee:hover {
