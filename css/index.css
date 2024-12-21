@@ -111,6 +111,7 @@ a{
     bottom: -0.875rem;
     left: -5.5rem;
     padding: 1.5vh 2vh;
+    overflow: hidden;
 }
 .panel h3{
     font-size: 0.833rem;
@@ -185,28 +186,34 @@ a{
   width: 20%;
   }
 .monitor .region {
-  width: 20%;
+  width: 15%;
   }
 .monitor .startTime {
-  width: 40%;
+  width: 30%;
+  }
+.monitor .completeTime {
+  width: 30%;
   }
 .monitor .status {
   width: 20%;
   }
 .monitor .marquee-view{
   position: absolute;
-  top: 1.6rem;
+  top: 1.5rem;
   bottom: 0;
   width: 100%;
   overflow: hidden;
 }
 .monitor .row{
-  line-height: 1.05;
-  padding: 1vh 2vh;
+  height: 3.2vh;
+  /* line-height: 1.05;
+  padding: 1vh 2vh; */
+  padding: 0vh 2vh;
   color: #61a8ff;
   font-size: 0.5rem;
   position: relative;
   display: flex;
+  align-items: center;
   justify-content: space-between;
 }
 .monitor .row:hover{
@@ -224,22 +231,17 @@ a{
 
 /* 动画 */
 @keyframes autoScroll{
-  /* 0%{
-  }
-  100%{
-    transform: translateY(-50%);
-  } */
   from{ transform: translateY(100vh); }
   to{ transform: translateY(-100%); }
 }
 /* 调用动画 */
 .monitor .marquee {
   /* //infinite永久调用动画 */
-  animation: autoScroll  10s linear infinite;
+  /* animation: autoScroll  10s linear infinite; */
 }
 /*鼠标划入 停止动画  */
 .monitor .marquee:hover {
-  animation-play-state: paused;
+  /* animation-play-state: paused; */
 }
 
 /* 设备区块信息 */

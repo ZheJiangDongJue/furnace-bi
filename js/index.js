@@ -571,6 +571,7 @@ _G.refreshMinAndMaxTemperature = function () {
 
 //#region 明细列表
 (function () {
+    var 明细滚动行数 = 0;
 
     // var 获取到的最后时间 = { date: _G.convertDateToFormatDateStr(_G.获取N天前的现在(15)) };
 
@@ -616,6 +617,8 @@ _G.refreshMinAndMaxTemperature = function () {
 
         let newDateString = data.EquipmentStartTime.replace("T", " ");
         newDateString = _G.convertDateStrToSimpleFormatDateStr(newDateString);
+        let endDateString = data.EquipmentEndTime.replace("T", " ");
+        endDateString = _G.convertDateStrToSimpleFormatDateStr(endDateString);
         newRow.innerHTML = `
         <span class="col code">${data.MaterialCode}</span>
         <span class="col name">${data.MaterialName}</span>
@@ -623,6 +626,7 @@ _G.refreshMinAndMaxTemperature = function () {
         <span class="col component">${data.EquipmentComponentName}</span>
         <span class="col region">${区域}</span>
         <span class="col startTime">${newDateString}</span>
+        <span class="col completeTime">${endDateString}</span>
         <span class="col status ${status_color}">${status_str}</span>
         <span class="icon-dot"></span>`;
         return newRow;
@@ -708,9 +712,11 @@ _G.refreshMinAndMaxTemperature = function () {
                 });
 
                 clearContainer('detail_list');
+                clearContainer('detail_list1');
 
                 for (var i = obj.length - 1; i >= 0; i--) {
                     insertRowAtBeginning('detail_list', obj[i]);
+                    insertRowAtBeginning('detail_list1', obj[i]);
                 }
 
                 // if (obj.length > 0) {
@@ -735,40 +741,61 @@ _G.refreshMinAndMaxTemperature = function () {
         // console.log("Viewport Width:", viewportWidth);
         // console.log("Viewport Height:", viewportHeight);
 
-        var detail_list_viewport = document.getElementById("detail_list_viewport")
+        var detail_list_view = document.getElementById("detail_list_view")
         
         // const width = element.clientWidth;
-        const detail_list_viewport_height = detail_list_viewport.clientHeight;
+        const detail_list_viewport_height = detail_list_view.clientHeight;
 
         // // console.log("Width: " + width + ", Height: " + height);
 
-        var root = document.getElementById("root");
-        var rootFontsize = root.style.fontSize;
+        // var root = document.getElementById("root");
+        // var rootFontsize = root.style.fontSize;
         // console.log("fontsize: "+root.style.fontSize);
 
-        var rootFontsize = rootFontsize.replace("px", "");
-        var rowFontSize = rootFontsize * 0.5; // 根据根元素的字体大小计算字体大小
-        var rowLineHeight = rowFontSize * 1.05; // 根据根元素的字体大小计算行高
-        var row1vh = viewportHeight / 100 * 1;
-        var rowResultHeight = row1vh * 2 + rowLineHeight;
-        // console.log("rowHeight: "+rowResultHeight);
+        // var rootFontsize = rootFontsize.replace("px", "");
+        // var rowFontSize = rootFontsize * 0.5; // 根据根元素的字体大小计算字体大小
+        // var rowLineHeight = rowFontSize * 1.05; // 根据根元素的字体大小计算行高
+        // var row1vh = viewportHeight / 100 * 1;
+        // var rowResultHeight = row1vh * 2 + rowLineHeight;
+        // // console.log("rowHeight: "+rowResultHeight);
 
-        const parent = document.getElementById('detail_list');
-        var count = parent.childElementCount;
-        // console.log(count);
+        // const parent = document.getElementById('detail_list_viewport');
+        // const list = document.getElementById('detail_list');
+        // var count = list.childElementCount;
+        // // console.log(count);
 
-        var 可容纳行数 = Math.floor(detail_list_viewport_height / rowResultHeight);
+        // var 可容纳行数 = Math.floor(detail_list_viewport_height / rowResultHeight);
 
-        if (count > 可容纳行数) {
-            // 设置自动滚动
-            if (!parent.classList.contains("marquee")) {
-                parent.classList.add("marquee")
-            }
+        // if (count > 可容纳行数) {
+        //     // 设置自动滚动
+        //     if (!parent.classList.contains("marquee")) {
+        //         parent.classList.add("marquee")
+        //     }
+        // }
+        // else{
+        //     if (parent.classList.contains("marquee")) {
+        //         parent.classList.remove("marquee")
+        //     }
+        // }
+
+        const list = document.getElementById('detail_list');
+        var count = list.childElementCount;
+        var resultCount = count * 2;
+        var rowHeight = 3.2 * viewportHeight / 100;
+        var countHeight = resultCount * rowHeight;
+
+
+        if(明细滚动行数 == count){
+            明细滚动行数 = 0;
+            gsap.to("#detail_list", {y: 0, duration: 0});
+            gsap.to("#detail_list1", {y: 0, duration: 0});
         }
-        else{
-            if (parent.classList.contains("marquee")) {
-                parent.classList.remove("marquee")
-            }
+
+        if (countHeight > detail_list_viewport_height) {
+            // 每次向上滚动一行
+            明细滚动行数++;
+            gsap.to("#detail_list", {y: -明细滚动行数 * rowHeight, duration: 2});
+            gsap.to("#detail_list1", {y: -明细滚动行数 * rowHeight, duration: 2});
         }
     }
 
@@ -780,13 +807,17 @@ _G.refreshMinAndMaxTemperature = function () {
         //     updateData(newData);  // 更新页面上的显示
         // }, 1000);  // 每 5 秒更新一次
 
+        setInterval(() => {
+            判定明细滚动或者不滚动();
+        }, 3000);
+
         // 每 5 秒钟模拟一次 API 调用并更新数据
         setInterval(() => {
             updateData();  // 更新页面上的显示
-            判定明细滚动或者不滚动();
         }, 5000);  // 每 5 秒更新一次
     });
     clearContainer("detail_list")
+    clearContainer("detail_list1")
     updateData();
     判定明细滚动或者不滚动();
 })();

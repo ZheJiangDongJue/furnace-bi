@@ -251,12 +251,16 @@
                             <span class="col name">物料名称</span>
                             <span class="col specType">规格型号</span>
                             <span class="col component">组件名称</span>
-                            <span class="col region">所在区域</span>
+                            <span class="col region">区域</span>
                             <span class="col startTime">启动时间</span>
+                            <span class="col completeTime">完工时间</span>
                             <span class="col status">执行状态</span>
                         </div>
-                        <div id="detail_list_viewport" class="marquee-view">
-                            <div id="detail_list" class="marquee"></div>
+                        <div id="detail_list_view" class="marquee-view">
+                            <div id="detail_list_viewport" class="marquee">
+                                <div id="detail_list" class="list"></div>
+                                <div id="detail_list1" class="list"></div>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -304,6 +308,7 @@
 
 <script src="./node_modules/jquery/dist/jquery.min.js"></script>
 <script src="./node_modules/echarts/dist/echarts.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.3/gsap.min.js"></script>
 
 <script src="./js/api.js"></script>
 <script src="./js/index.js"></script>
