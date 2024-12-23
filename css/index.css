@@ -326,7 +326,7 @@ a{
 }
 .sales .chart {
   flex: 1;
-  padding-top: 0.6rem;
+  /* padding-top: 0.6rem; */
   position: relative;
 }
 .sales .label {
@@ -368,7 +368,7 @@ a{
 }
 .Area .chart {
   flex: 1;
-  padding-top: 0.6rem;
+  /* padding-top: 0.6rem; */
   position: relative;
 }
 .Area .label {

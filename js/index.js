@@ -13,8 +13,14 @@ const 输出调试信息 = false;
 
 //#endregion
 
+const enum_WatermarkType = {
+    服务器无响应: Math.pow(2, 0),
+    查询发生异常: Math.pow(2, 1),
+}
+
 //#region 共用函数
 var _G = {};
+_G.Watermarks = {};
 _G.Status = {
     炉膛温度: 0,
     上区PV: 0,
@@ -114,7 +120,7 @@ _G.convertDateStrToFormatDateStr = function (date_str) {
 
     return `${year}-${month}-${day} ${hours}:${minutes}:${seconds}`;
 };
-//转换时间格式字符串为简单的时间字符串(24/12/18 11:11)
+//转换时间格式字符串为简单的时间字符串(24.12.18 11:11)
 _G.convertDateStrToSimpleFormatDateStr = function (date_str) {
 
     var date = new Date(date_str);
@@ -124,7 +130,7 @@ _G.convertDateStrToSimpleFormatDateStr = function (date_str) {
     const hours = String(date.getHours()).padStart(2, '0');
     const minutes = String(date.getMinutes()).padStart(2, '0');
 
-    return `${year.toString().slice(-2)}/${month}/${day} ${hours}:${minutes}`;
+    return `${year.toString().slice(-2)}.${month}.${day} ${hours}:${minutes}`;
 };
 //转换时间为时间字符串
 _G.convertDateToFormatDateStr = function (date) {
@@ -382,6 +388,25 @@ _G.refreshMinAndMaxTemperature = function () {
 //#region 全局定时器
 
 (function () {
+    _G.Watermarks = {};
+    _G.Watermarks.temperature_watermark = {
+        blockid: "temperature_watermark",
+        textid: "temperature_watermark_text",
+        text: "",
+        showTag: 0,
+    }
+    _G.Watermarks.region_temperature_watermark = {
+        blockid: "region_temperature_watermark",
+        textid: "region_temperature_watermark_text",
+        text: "",
+        showTag: 0,
+    }
+    _G.Watermarks.connect_watermark = {
+        blockid: "connect_watermark",
+        textid: "connect_watermark_text",
+        text: "",
+        showTag: 0,
+    }
 
     // 当文档加载完成时执行
     document.addEventListener('DOMContentLoaded', () => {
@@ -401,15 +426,42 @@ _G.refreshMinAndMaxTemperature = function () {
             _G.refreshMinAndMaxTemperature();
 
             // 在获取最后启动时间中有更新连接状态
-            // 判断是否连接并设置id为"connect_watermark"的元素的显示状态(为防止卡顿,当连接状态改变时才更新)
+            // 判断是否连接并设置所有watermark的元素的显示状态(为防止卡顿,当连接状态改变时才更新)
             if (_G.StatusEx.与Api的连接状态 != _G.StatusEx.与Api的连接状态_last) {
                 _G.StatusEx.与Api的连接状态_last = _G.StatusEx.与Api的连接状态;
                 if (_G.StatusEx.与Api的连接状态) {
-                    $("#connect_watermark").hide();
+                    Object.keys(_G.Watermarks).forEach(key => {
+                        _G.Watermarks[key].showTag &= ~enum_WatermarkType.服务器无响应;
+                    });
                 } else {
-                    $("#connect_watermark").show();
+                    Object.keys(_G.Watermarks).forEach(key => {
+                        _G.Watermarks[key].showTag |= enum_WatermarkType.服务器无响应;
+                    });
                 }
             }
+
+            // 更新watermark的显示状态
+            Object.keys(_G.Watermarks).forEach(key => {
+                // 设置各种情况下watermark的文本
+                if (_G.Watermarks[key].showTag & enum_WatermarkType.服务器无响应) {
+                    _G.Watermarks[key].text = "服务器无响应";
+                }
+                if (_G.Watermarks[key].showTag & enum_WatermarkType.查询发生异常) {
+                    _G.Watermarks[key].text = "查询发生异常";
+                }
+            });
+
+            // 显示或者隐藏watermark
+            Object.keys(_G.Watermarks).forEach(key => {
+                // 只要showTag>0就显示
+                if (_G.Watermarks[key].showTag > 0) {
+                    $(`#${_G.Watermarks[key].blockid}`).show();
+                    $(`#${_G.Watermarks[key].textid}`).text(_G.Watermarks[key].text);
+                } else {
+                    $(`#${_G.Watermarks[key].blockid}`).hide();
+                    $(`#${_G.Watermarks[key].textid}`).text("");
+                }
+            });
         }
 
         // 每 1 秒钟模拟一次 API 调用并更新数据
@@ -571,6 +623,13 @@ _G.refreshMinAndMaxTemperature = function () {
 
 //#region 明细列表
 (function () {
+    // 把明细列表对应的watermark的key放到局部变量中
+    var local_watermark_key = "connect_watermark";
+    // 在函数外部定义时间轴变量
+    let scrollTimeline;
+    scrollTimeline = gsap.timeline();
+    var pause = false;
+
     var 明细滚动行数 = 0;
 
     // var 获取到的最后时间 = { date: _G.convertDateToFormatDateStr(_G.获取N天前的现在(15)) };
@@ -617,8 +676,11 @@ _G.refreshMinAndMaxTemperature = function () {
 
         let newDateString = data.EquipmentStartTime.replace("T", " ");
         newDateString = _G.convertDateStrToSimpleFormatDateStr(newDateString);
-        let endDateString = data.EquipmentEndTime.replace("T", " ");
-        endDateString = _G.convertDateStrToSimpleFormatDateStr(endDateString);
+        let endDateString = '';
+        if(data.status == 2){
+            endDateString = data.EquipmentEndTime.replace("T", " ");
+            endDateString = _G.convertDateStrToSimpleFormatDateStr(endDateString);
+        }
         newRow.innerHTML = `
         <span class="col code">${data.MaterialCode}</span>
         <span class="col name">${data.MaterialName}</span>
@@ -678,6 +740,9 @@ _G.refreshMinAndMaxTemperature = function () {
             }, // Parameters to send
             dataType: "json",
             success: function (data) {
+                // 查询成功了就移除watermark
+                _G.Watermarks[local_watermark_key].showTag &= ~enum_WatermarkType.查询发生异常;
+
                 var obj = JSON.parse(data.Data)
 
                 if (输出调试信息 === true) {
@@ -725,6 +790,8 @@ _G.refreshMinAndMaxTemperature = function () {
             },
             error: function (error) {
                 console.error("Error fetching data:", error);
+                // error了就设置watermark
+                _G.Watermarks[local_watermark_key].showTag |= enum_WatermarkType.查询发生异常;
             }
         });
     }
@@ -735,6 +802,7 @@ _G.refreshMinAndMaxTemperature = function () {
     }
 
     function 判定明细滚动或者不滚动(){
+        if(pause) return;
         // const viewportWidth = window.innerWidth;
         const viewportHeight = window.innerHeight;
 
@@ -784,23 +852,34 @@ _G.refreshMinAndMaxTemperature = function () {
         var rowHeight = 3.2 * viewportHeight / 100;
         var countHeight = resultCount * rowHeight;
 
+        var 滚动所需时间 = 1;
 
         if(明细滚动行数 == count){
             明细滚动行数 = 0;
-            gsap.to("#detail_list", {y: 0, duration: 0});
-            gsap.to("#detail_list1", {y: 0, duration: 0});
+            scrollTimeline.to("#detail_list", {y: 0, duration: 0});
+            scrollTimeline.to("#detail_list1", {y: 0, duration: 0});
         }
 
         if (countHeight > detail_list_viewport_height) {
             // 每次向上滚动一行
             明细滚动行数++;
-            gsap.to("#detail_list", {y: -明细滚动行数 * rowHeight, duration: 2});
-            gsap.to("#detail_list1", {y: -明细滚动行数 * rowHeight, duration: 2});
+
+            scrollTimeline.to("#detail_list", {y: -明细滚动行数 * rowHeight, duration: 滚动所需时间});
+            scrollTimeline.to("#detail_list1", {y: -明细滚动行数 * rowHeight, duration: 滚动所需时间}, "<");
         }
     }
 
     document.addEventListener('DOMContentLoaded', () => {
+        // 只绑定一次事件监听器
+        detail_list_view.addEventListener("mouseenter", () => {
+            pause = true;
+            if(scrollTimeline) scrollTimeline.pause();
+        });
 
+        detail_list_view.addEventListener("mouseleave", () => {
+            pause = false;
+            if(scrollTimeline) scrollTimeline.play();
+        });
         // // 每 5 秒钟模拟一次 API 调用并更新数据
         // setInterval(() => {
         //     const newData = simulateAPI();  // 获取新的数据
@@ -809,7 +888,7 @@ _G.refreshMinAndMaxTemperature = function () {
 
         setInterval(() => {
             判定明细滚动或者不滚动();
-        }, 3000);
+        }, 2000);
 
         // 每 5 秒钟模拟一次 API 调用并更新数据
         setInterval(() => {
@@ -828,6 +907,9 @@ _G.refreshMinAndMaxTemperature = function () {
 
 // 温度折线图（定时器）
 (function () {
+    // 把温度折线图对应的watermark的key放到局部变量中
+    var local_watermark_key = "temperature_watermark";
+
     // const default_count = 10;
 
     // 配置温度折线图的选项
@@ -930,6 +1012,9 @@ _G.refreshMinAndMaxTemperature = function () {
             data: data, // Parameters to send
             dataType: "json",
             success: function (data) {
+                // 查询成功了就移除watermark
+                _G.Watermarks[local_watermark_key].showTag &= ~enum_WatermarkType.查询发生异常;
+
                 var obj = JSON.parse(data.Data)
 
                 if (输出调试信息 === true) {
@@ -971,6 +1056,8 @@ _G.refreshMinAndMaxTemperature = function () {
             },
             error: function (error) {
                 console.error("Error fetching data:", error);
+                // error了就设置watermark
+                _G.Watermarks[local_watermark_key].showTag |= enum_WatermarkType.查询发生异常;  
             }
         });
     }
@@ -978,6 +1065,10 @@ _G.refreshMinAndMaxTemperature = function () {
     function getMoreTemperature() {
         if (_G.StatusEx.最后启动时间_str == null) {
             if (!isShowLastData) {
+                // 清除旧数据
+                option.series[0].data = [];
+                option.xAxis.data = [];
+
                 isShowLastData = true;
                 getMoreTemperatureForAjax({
                     dbName: 主数据库名称, // 需要获取的温度类型
@@ -1039,6 +1130,9 @@ _G.refreshMinAndMaxTemperature = function () {
 
 // 上区、中区、下区温度折线图（定时器）
 (function () {
+    // 把区域温度折线图对应的watermark的key放到局部变量中
+    var local_watermark_key = "region_temperature_watermark";
+
     const maxDataPoints = 10;  // 每个选项卡最大可见数据点
 
     function getMoreTemperatureForAjax(group, key, data) {
@@ -1048,6 +1142,9 @@ _G.refreshMinAndMaxTemperature = function () {
             data: data, // Parameters to send
             dataType: "json",
             success: function (data) {
+                // 查询成功了就移除watermark
+                _G.Watermarks[local_watermark_key].showTag &= ~enum_WatermarkType.查询发生异常;
+
                 var obj = JSON.parse(data.Data)
 
                 if (输出调试信息 === true) {
@@ -1089,6 +1186,8 @@ _G.refreshMinAndMaxTemperature = function () {
             },
             error: function (error) {
                 console.error("Error fetching data:", error);
+                // error了就设置watermark
+                _G.Watermarks[local_watermark_key].showTag |= enum_WatermarkType.查询发生异常;
             }
         });
     }
@@ -1096,8 +1195,11 @@ _G.refreshMinAndMaxTemperature = function () {
     function getMoreTemperature(group, key, relativeTimeBaseValue) {
         if (_G.StatusEx.最后启动时间_str == null) {
             if (!group[key].isShowLastData) {
-                group[key].isShowLastData = true;
+                // 清除旧数据
+                group[key].xData = [];
+                group[key].yData = [];
 
+                group[key].isShowLastData = true;
                 getMoreTemperatureForAjax(group, key, {
                     dbName: 主数据库名称, // 需要获取的温度类型
                     equipmentUid: 设备Uid, // 设备的唯一标识符
@@ -1379,48 +1481,3 @@ _G.refreshMinAndMaxTemperature = function () {
         myechart.resize();  // 调整图表大小
     });
 })();
-
-// //炉膛温度API
-// function ajax(type, url, params, callback) {
-//     // 创建ajax引擎对象
-//     let xhr = new XMLHttpRequest();
-
-//     if (type === "get") {
-//         // 配置请求方式和请求地址，不拼接参数
-//         xhr.open(type, url);
-//         // 发送请求
-//         xhr.send();
-//     } else {
-//         // 配置请求方式和请求地址
-//         xhr.open(type, url);
-//         // 设置请求头
-//         xhr.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
-//         // 发送请求
-//         xhr.send(params);
-//     }
-
-//     // 监听状态变化和接收数据
-//     xhr.onreadystatechange = function () {
-//         if (xhr.readyState === 4 && xhr.status === 200) {
-//             // 处理数据
-//             callback(JSON.parse(xhr.responseText));
-//         }
-//     };
-// }
-
-// 调用 ajax 函数
-// ajax("get", "http://192.168.3.250:7790/spiderapiserver/getsmmpricewithdaterange?dbName=PEM1&startDate=2024-10-01&endDate=2024-11-08", null, function (res) {
-//     // 获取Status并显示在<h4>元素上
-//     if (res && res.Status !== undefined) {
-//         document.getElementById('status').textContent = `${res.Status}℃`;
-//     }
-// });
-
-// ajax("get", "http://192.168.3.250:7790/biapiserver/getminandmaxtemperatureintimerange", {
-//     equipmentUid : 设备Uid,
-//     minDateTime:"2024-11-17 00:00:00",
-//     maxDateTime:"2024-11-19 00:00:00",
-//     keys:"炉膛温度"
-// }, function (res) {
-//     console.log(res)
-// });
