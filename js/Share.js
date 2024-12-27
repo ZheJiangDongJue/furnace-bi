@@ -52,6 +52,7 @@ _G.StatusEx = {
     加热状态改变的时间点: new Date(),
     最后启动时间_str: null,
     最后完整烧炉的启动时间_str: null,
+    最后完整烧炉的结束时间_str: null,
     与Api的连接状态: false,
 }
 _G.isBoolean = function (value) {
@@ -290,6 +291,26 @@ _G.获取最后启动时间 = function () {
         },
         error: function (error) {
             _G.StatusEx.与Api的连接状态 = false;
+            console.error("Error fetching data:", error);
+        }
+    });
+};
+_G.获取最后完整烧炉的结束时间 = function () {
+    if (_G.StatusEx.最后完整烧炉的启动时间_str == null) {
+        return;
+    }
+    $.ajax({
+        type: "GET",
+        url: `http://${地址}/biapiserver/getfirstendtimeafter`,
+        data: {
+            equipmentUid: 设备Uid, // 设备的唯一标识符
+            afterDateTime: _G.StatusEx.最后完整烧炉的启动时间_str
+        }, // Parameters to send
+        dataType: "json",
+        success: function (data) {
+            _G.StatusEx.最后完整烧炉的结束时间_str = _G.convertDateStrToFormatDateStr(data);
+        },
+        error: function (error) {
             console.error("Error fetching data:", error);
         }
     });
