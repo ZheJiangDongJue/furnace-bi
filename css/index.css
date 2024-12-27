@@ -28,6 +28,45 @@ a{
     height: 90vh;
 }
 
+
+/* Swiper容器的样式 */
+.swiper-container {
+  width: 95%;
+  height: 100%;
+  padding: 20px 0;
+}
+
+
+/* 每个卡片的样式 */
+.card {
+  box-sizing: border-box;
+  border: 2px solid red;
+  border-image: url(../images/border.png) 51 38 21 132;
+  border-width: 0.875rem 0.875rem 0.875rem 0.875rem;
+  position: relative;
+  margin-bottom: 0.833rem;
+  padding: 10px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  height: 200vh; /* 设置卡片的高度，可以根据需要调整 */
+  color: white; /* 设定字体颜色为白色 */
+}
+
+/* 卡片内容样式 */
+.card-content {
+  font-size: 14px;
+  line-height: 1.6;
+}
+
+/* 状态颜色 */
+.color-gray { color: gray; }
+.color-red { color: red; }
+.color-orange { color: orange; }
+.color-green { color: green; }
+
+
+
 /*左侧头部*/
 .left_title {
   position: absolute;
@@ -122,11 +161,16 @@ a{
 .monitor{
 	height: 74vh;
   }
-.monitor .inner{
-	padding: 1.5vh 0;
-	display: flex;
-	flex-direction: column;
-  }
+.monitor .box{
+  /* 装内容 */
+  position: absolute;
+  top: -2.125rem;
+  right: -1.583rem;
+  bottom: -0.875rem;
+  left: -5.5rem;
+  padding: 1.5vh 0vh;
+  overflow: hidden;
+}
 .monitor .tabs {
   padding: 0 2vh; /* 设置左右内边距 */
   margin-bottom: 0.75rem; /* 设置底部外边距 */
@@ -154,61 +198,25 @@ a{
 /*  width: 1%; !* 确保元素占满父容器的宽度，以便进行居右对齐 *!*/
 /*}*/
 
-.monitor .content{
-	flex: 1;
-	display: none;
-	position: relative;
-  }
-.monitor .head{
-	background: rgba(255, 255, 255, 0.1);
-	font-size: 0.583rem;
-	padding: 1vh 2vh;
-	color: #68d8fe;
-	display: flex;
-	justify-content: space-between;
-	line-height: 1.05;
-  }
+
 .monitor .col{
 	justify-content: center; /* 水平居中对齐 */
 	align-items: center; /* 垂直居中对齐 */
 	text-align: center;
 }
-.monitor .code {
-  width: 20%;
-  }
-.monitor .name {
-  width: 20%;
-  }
-.monitor .specType {
-  width: 60%;
-  }
-.monitor .component {
-  width: 20%;
-  }
-.monitor .region {
-  width: 15%;
-  }
-.monitor .startTime {
-  width: 30%;
-  }
-.monitor .completeTime {
-  width: 30%;
-  }
-.monitor .status {
-  width: 20%;
-  }
+
 .monitor .marquee-view{
   position: absolute;
   top: 1.5rem;
   bottom: 0;
   width: 100%;
   overflow: hidden;
+  justify-content: center; /* 水平居中 */
+  display: flex;
+  height: 86%;
 }
 .monitor .row{
   height: 3.2vh;
-  /* line-height: 1.05;
-  padding: 1vh 2vh; */
-  padding: 0vh 2vh;
   color: #61a8ff;
   font-size: 0.5rem;
   position: relative;
