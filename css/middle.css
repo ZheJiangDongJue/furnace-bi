@@ -1,0 +1,90 @@
+
+
+/* Swiper 容器的样式 */
+.swiper-container {
+    width: 95%; /* 设置容器宽度为全宽 */
+    height: auto; /* 高度自适应 */
+    padding: 20px 0;
+    overflow: hidden; /* 隐藏溢出部分 */
+}
+
+/* 每个卡片的样式 */
+.card {
+    box-sizing: border-box;
+    border: 2px solid red;
+    border-image: url(../images/border.png) 51 38 21 132;
+    border-width: 0.875rem 0.875rem 0.875rem 0.875rem;
+    position: relative;
+    margin-right: 0;
+    padding: 10px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    width: 18%; /* 设置卡片的宽度，根据需要调整 */
+    color: white; /* 字体颜色为白色 */
+}
+
+
+/* 卡片内容样式 */
+.card-content {
+    font-size: 12px;
+    line-height: 1.6;
+}
+
+
+/* 状态颜色 */
+.color-gray { color: gray; }
+.color-red { color: red; }
+.color-orange { color: orange; }
+.color-green { color: green; }
+
+
+.card-content {
+    display: flex;
+    flex-wrap: wrap; /* 如果卡片内容过多，允许换行 */
+    justify-content: space-between; /* 子元素之间的空间均匀分布 */
+    gap: 10px; /* 设置子元素之间的间距 */
+}
+
+.card-item {
+    flex: 1 1 20%; /* 所有卡片项默认占据相等的空间，可以根据需要调整 */
+    min-width: 16vh; /* 每个项的最小宽度 */
+    box-sizing: border-box; /* 包括内边距和边框在内计算宽度 */
+}
+
+.item-MaterialCode {
+    flex-grow: 1; /* 标题占较小的空间 */
+}
+
+.item-MaterialName {
+    flex-grow: 1; /* 区域占1份空间 */
+}
+
+.item-region {
+    flex-grow: 1; /* 区域占1份空间 */
+}
+
+.item-status {
+    flex-grow: 0.5; /* 状态占1份空间 */
+}
+
+.item-newDateString {
+    flex-grow: 3; /* 开始时间占1份空间 */
+}
+
+.item-end-time {
+    flex-grow: 3; /* 完成时间占1份空间 */
+}
+
+.item-EquipmentComponentName {
+    flex-grow: 1; /* 完成时间占1份空间 */
+}
+.card-item p {
+    margin: 0;
+    font-size: 0.8rem;
+}
+.card-item span {
+    font-weight: bold;
+}
+
+

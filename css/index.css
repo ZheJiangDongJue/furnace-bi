@@ -29,44 +29,6 @@ a{
 }
 
 
-/* Swiper容器的样式 */
-.swiper-container {
-  width: 95%;
-  height: 100%;
-  padding: 20px 0;
-}
-
-
-/* 每个卡片的样式 */
-.card {
-  box-sizing: border-box;
-  border: 2px solid red;
-  border-image: url(../images/border.png) 51 38 21 132;
-  border-width: 0.875rem 0.875rem 0.875rem 0.875rem;
-  position: relative;
-  margin-bottom: 0.833rem;
-  padding: 10px;
-  display: flex;
-  flex-direction: column;
-  justify-content: space-between;
-  height: 200vh; /* 设置卡片的高度，可以根据需要调整 */
-  color: white; /* 设定字体颜色为白色 */
-}
-
-/* 卡片内容样式 */
-.card-content {
-  font-size: 14px;
-  line-height: 1.6;
-}
-
-/* 状态颜色 */
-.color-gray { color: gray; }
-.color-red { color: red; }
-.color-orange { color: orange; }
-.color-green { color: green; }
-
-
-
 /*左侧头部*/
 .left_title {
   position: absolute;
