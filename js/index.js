@@ -36,7 +36,7 @@
                     data: {
                         dbName: 主数据库名称,
                         equipmentid: 设备id,
-                        lastTime: _G.convertDateToFormatDateStr(_G.获取N天前的现在(3)),
+                        lastTime: _G.convertDateToFormatDateStr(_G.获取N天前的现在(7)),
                     },
                     dataType: "json",
                     success: function (data) {
@@ -56,6 +56,8 @@
                             var status = -1;
                             if (最后启动时间_无论是否结束 == null) {
                                 status = -1; //...
+                            }else if(element.DailyPlanSatatus == 4){
+                                status = 3;//已结案
                             } else if (element.eedid == null) {
                                 status = 0; //未开始
                             } else if (单据设备启动时间 < 最后完整烧炉的结束时间) {
@@ -203,27 +205,27 @@
             return newCard;
         }
 
-        // 事件监听
-        document.addEventListener("DOMContentLoaded", () => {
-            var detail_list_view = document.getElementById("detail_list_view");
+        // // 事件监听
+        // document.addEventListener("DOMContentLoaded", () => {
+        //     var detail_list_view = document.getElementById("detail_list_view");
 
-            detail_list_view.addEventListener("mouseenter", () => {
-                pause = true;
-                if (scrollTimeline) scrollTimeline.pause();
-            });
+        //     detail_list_view.addEventListener("mouseenter", () => {
+        //         pause = true;
+        //         if (scrollTimeline) scrollTimeline.pause();
+        //     });
 
-            detail_list_view.addEventListener("mouseleave", () => {
-                pause = false;
-                if (scrollTimeline) scrollTimeline.play();
-            });
+        //     detail_list_view.addEventListener("mouseleave", () => {
+        //         pause = false;
+        //         if (scrollTimeline) scrollTimeline.play();
+        //     });
 
-            setInterval(() => {
-                updateData();
-            }, 5000);
-        });
+        //     setInterval(() => {
+        //         updateData();
+        //     }, 5000);
+        // });
 
-        // 初始化清空容器并加载数据
-        clearContainer("detail_list");
-        updateData();
+        // // 初始化清空容器并加载数据
+        // clearContainer("detail_list");
+        // updateData();
     }, 500); // 延迟500ms后初始化 Swiper，确保内容完全加载
 })();

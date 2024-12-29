@@ -264,6 +264,8 @@ _G.获取最后完整烧炉的启动时间 = function () {
             }
 
             _G.StatusEx.最后完整烧炉的启动时间_str = _G.convertDateStrToFormatDateStr(data);
+
+            _G.获取最后完整烧炉的结束时间();
         },
         error: function (error) {
             console.error("Error fetching data:", error);
