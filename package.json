@@ -2,6 +2,7 @@
   "dependencies": {
     "echarts": "^4.2.1",
     "jquery": "^3.7.1",
+    "layui": "^2.9.21-rc.1",
     "swiper": "^11.1.15"
   }
 }

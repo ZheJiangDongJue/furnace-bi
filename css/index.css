@@ -36,9 +36,7 @@ a{
   left: -3.5rem;
   width: 17rem;
   border-color: #60c5e9;
-  border-radius: 1rem;
-  border-top-left-radius: 0;
-  border-bottom-right-radius: 0;
+  border-radius: 0 1rem 0 1rem;
   border-style: dashed;
   border-top-width: 0;
   border-bottom-width: 0;
@@ -117,86 +115,6 @@ a{
 .panel h3{
     font-size: 0.833rem;
     color: #fff;
-}
-
-/* 生产实时明细 */
-.monitor{
-	height: 74vh;
-  }
-.monitor .box{
-  /* 装内容 */
-  position: absolute;
-  top: -2.125rem;
-  right: -1.583rem;
-  bottom: -0.875rem;
-  left: -5.5rem;
-  padding: 1.5vh 0vh;
-  overflow: hidden;
-}
-.monitor .tabs {
-  padding: 0 2vh; /* 设置左右内边距 */
-  margin-bottom: 0.75rem; /* 设置底部外边距 */
-  display: flex; /* 使用 flexbox 排列元素 */
-  align-items: center; /* 垂直居中对齐 */
-  justify-content: flex-start; /* 可以根据需要选择对齐方式，如居左、居中或居右 */
-}
-
-.monitor .tabs a{
-	color: #1950c4;
-	font-size: 0.75rem;
-	padding: 0 1.125vh;
-  }
-.monitor .tabs a:first-child{
-	border-right: 0.083rem solid #00f2f1;
-	padding-left: 0;
-  }
-.monitor .tabs a.active{
-	color: #fff;
-  }
-/*.monitor .tabs a.align-right {*/
-/*  display: flex; !* 启用 Flexbox 布局 *!*/
-/*  justify-content: flex-end; !* 水平居右对齐 *!*/
-/*  text-align: right; !* 可保留，如果需要对单行文本进行对齐 *!*/
-/*  width: 1%; !* 确保元素占满父容器的宽度，以便进行居右对齐 *!*/
-/*}*/
-
-
-.monitor .col{
-	justify-content: center; /* 水平居中对齐 */
-	align-items: center; /* 垂直居中对齐 */
-	text-align: center;
-}
-
-.monitor .marquee-view{
-  position: absolute;
-  top: 1.5rem;
-  bottom: 0;
-  width: 100%;
-  overflow: hidden;
-  justify-content: center; /* 水平居中 */
-  display: flex;
-  height: 86%;
-}
-.monitor .row{
-  height: 3.2vh;
-  color: #61a8ff;
-  font-size: 0.5rem;
-  position: relative;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-}
-.monitor .row:hover{
-  color:#68d8ff;
-  background: rgba(255, 255, 255, 0.1);
-}
-.monitor .row:hover .icon-dot{
-  opacity: 1;
-}
-.monitor .icon-dot{
-  position: absolute;
-  left: 0.64rem;
-  opacity: 0;
 }
 
 /* 动画 */
@@ -373,7 +291,7 @@ a{
   display: flex;
   justify-content: space-between; /* 横向两者占据空间 */
   align-items: center;  /* 垂直居中对齐 */
-  padding: 2vh;
+  padding: 2vh; /* 内边距 */
 }
 .channel .item-border {
   width: 70%;
@@ -417,7 +335,7 @@ a{
 .quarter .inner {
   display: flex;
   flex-direction: column;
-  margin: 0 -0.25rem;
+  padding: 1.5vh 2vh;  /* 内边距 */
 }
 .quarter .chart {
   flex: 1;

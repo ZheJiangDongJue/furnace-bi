@@ -10,7 +10,7 @@
             // Swiper 实例 (横向滚动，每页显示3个垂直排列的卡片)
             var swiper = new Swiper(".swiper-container", {
                 direction: "horizontal", // 设置横向滚动
-                spaceBetween: 0, // 页之间的间距
+                spaceBetween: 18,
                 loop: false, // 取消无限循环
                 speed: 1000, // 滚动速度
                 autoplay: {
@@ -20,7 +20,7 @@
                 slidesPerView: 1,
                 grid: {
                     fill: 'column',
-                    rows: 3,
+                    rows: 4,
                 },
                 pagination: {
                     el: ".swiper-pagination", // 启用分页器
@@ -174,58 +174,45 @@
 
         newCard.innerHTML = `
           <div class="swiper-slide">
-            <div class="card-content">
-              <div class="card-item item-MaterialCode">
-                <p><strong>编码:</strong> ${data.MaterialCode}</p>
+              <div class="layui-row">
+                  <div class="layui-col-xs4">
+                      <p><strong>编码:</strong> ${data.MaterialCode}</p>
+                  </div>
+                  <div class="layui-col-xs4">
+                      <p><strong>物料名称:</strong> ${data.MaterialName}</p>
+                  </div>
+                  <div class="layui-col-xs4">
+                     <p><strong>炉号:</strong> ${data.EquipmentComponentName}</p>
+                  </div>
+                  
               </div>
-              <div class="card-item item-MaterialName">
-                <p><strong>物料名称:</strong> ${data.MaterialName}</p>
+              <div class="layui-row">
+                  <div class="layui-col-xs2">
+                      <p><strong>区域:</strong> ${区域}</p>
+                  </div>
+                  <div class="layui-col-xs2">
+                     <p><strong>状态:</strong> <span class="${status_color}">${status_str}</span></p>
+                  </div>
+                  <div class="layui-col-xs4">
+                    <p><strong>开始时间:</strong> ${newDateString}</p>
+                  </div>
+                  <div class="layui-col-xs4">
+                    <p><strong>完成时间:</strong> ${endDateString}</p>
+                  </div>
               </div>
-              <div class="card-item item-region">
-                <p><strong>区域:</strong> ${区域}</p>
+              <div class="layui-row">
+                  <div class="layui-col-xs8">
+                     <p><strong>规格:</strong> ${data.MaterialSpecType}</p>
+                  </div>
+                  <div class="layui-col-xs4">
+                     <p><strong>制令单号:</strong> ${data.InnerKey}</p>
+                  </div>    
               </div>
-              <div class="card-item item-status">
-                <p><strong>状态:</strong> <span class="${status_color}">${status_str}</span></p>
-              </div>
-              <div class="card-item item-newDateString">
-                <p><strong>开始时间:</strong> ${newDateString}</p>
-              </div>
-              <div class="card-item item-end-time">
-                <p><strong>完成时间:</strong> ${endDateString}</p>
-              </div>
-              <div class="card-item item-MaterialSpecType">
-                <p><strong>规格:</strong> ${data.MaterialSpecType}</p>
-              </div>
-              <div class="card-item item-EquipmentComponentName">
-                <p><strong>炉号:</strong> ${data.EquipmentComponentName}</p>
-              </div>
-            </div>
           </div>
         `;
             return newCard;
         }
 
-        // // 事件监听
-        // document.addEventListener("DOMContentLoaded", () => {
-        //     var detail_list_view = document.getElementById("detail_list_view");
 
-        //     detail_list_view.addEventListener("mouseenter", () => {
-        //         pause = true;
-        //         if (scrollTimeline) scrollTimeline.pause();
-        //     });
-
-        //     detail_list_view.addEventListener("mouseleave", () => {
-        //         pause = false;
-        //         if (scrollTimeline) scrollTimeline.play();
-        //     });
-
-        //     setInterval(() => {
-        //         updateData();
-        //     }, 5000);
-        // });
-
-        // // 初始化清空容器并加载数据
-        // clearContainer("detail_list");
-        // updateData();
     }, 500); // 延迟500ms后初始化 Swiper，确保内容完全加载
 })();
