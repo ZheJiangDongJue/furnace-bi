@@ -494,3 +494,39 @@ _G.refreshMinAndMaxTemperature = function () {
     });
 })();
 //#endregion
+
+// 模块状态（定时器）
+(function () {
+    document.addEventListener('DOMContentLoaded', () => {
+        const statuses = {
+            true: { text: '进行中', color: '#00CC00' },  // 状态为 true 时
+            false: { text: '停止', color: '#FF0000' }      // 状态为 false 时
+        };
+
+        // 更新页面中的模块状态
+        function updateData(data) {
+            // 更新加热状态
+            const heatingStatusElement = document.getElementById('heatingStatus');
+            const heatingStatus = statuses[_G.stringToBoolean(_G.Status.中区加热X)];
+            heatingStatusElement.innerHTML = heatingStatus.text;
+            heatingStatusElement.style.color = heatingStatus.color;
+
+            // 更新水泵状态
+            const vacuumPumpStatusElement = document.getElementById('vacuumPumpStatus');
+            const vacuumPumpStatus = statuses[_G.stringToBoolean(_G.Status.水泵X)];
+            vacuumPumpStatusElement.innerHTML = vacuumPumpStatus.text;
+            vacuumPumpStatusElement.style.color = vacuumPumpStatus.color;
+
+            // 更新对流风机状态
+            const fanStatusElement = document.getElementById('fanStatus');
+            const fanStatus = statuses[_G.stringToBoolean(_G.Status.冷风机X)];
+            fanStatusElement.innerHTML = fanStatus.text;
+            fanStatusElement.style.color = fanStatus.color;
+        }
+
+        // 每 1 秒钟模拟一次 API 调用并更新数据
+        setInterval(() => {
+            updateData();  // 更新页面上的显示
+        }, 1000);
+    });
+})();
