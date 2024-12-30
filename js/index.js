@@ -60,9 +60,9 @@
                                 status = 3;//已结案
                             } else if (element.eedid == null) {
                                 status = 0; //未开始
-                            } else if (单据设备启动时间 < 最后完整烧炉的结束时间) {
+                            } else if (_G.StatusEx.最后完整烧炉的结束时间_str != null && 单据设备启动时间 < 最后完整烧炉的结束时间) {
                                 status = 2; //已完成
-                            } else if (单据设备启动时间 > 最后启动时间) {
+                            } else if (_G.StatusEx.最后启动时间_str != null && 单据设备启动时间 > 最后启动时间) {
                                 status = 1; //进行中
                             } else {
                                 status = 0; //未开始
