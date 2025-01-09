@@ -12,9 +12,9 @@
                 direction: "horizontal", // 设置横向滚动
                 spaceBetween: 18,
                 loop: false, // 取消无限循环
-                speed: 1000, // 滚动速度
+                speed: 500, // 滚动速度
                 autoplay: {
-                    delay: 2000, // 自动切换间隔时间
+                    delay: 4000, // 自动切换间隔时间
                     disableOnInteraction: false, // 用户交互后仍然继续自动播放
                 },
                 slidesPerView: 1,
@@ -56,7 +56,7 @@
                             var status = -1;
                             if (最后启动时间_无论是否结束 == null) {
                                 status = -1; //...
-                            }else if(element.DailyPlanSatatus == 4){
+                            }else if((element.DailyPlanStatus & 4) == 4){
                                 status = 3;//已结案
                             } else if (element.eedid == null) {
                                 status = 0; //未开始
@@ -158,8 +158,8 @@
                     status_color = "color-green";
                     break;
                 case 3:
-                    status_str = "已结案";
-                    status_color = "color-gray";
+                    status_str = "已完成";
+                    status_color = "color-green";
                     break;
             }
 

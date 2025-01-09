@@ -58,12 +58,13 @@
 .card {
     box-sizing: border-box;
     position: relative; /* 使用相对定位 */
-    padding: 10px; /* 内边距 */
+    padding: 1.5vh; /* 内边距 */
     display: flex; /* 使用 flexbox 布局 */
     flex-direction: column; /* 垂直布局 */
     justify-content: space-between; /* 垂直居中 */
     width: 18%; /* 设置卡片的宽度，根据需要调整 */
     color: white; /* 字体颜色为白色 */
+    font-size: 1.5vh; /* 字体大小 */
 }
 
 .card::before {
@@ -97,7 +98,7 @@
 /*}*/
 
 .layui-row {
-    margin-bottom: 2vh; /* 调整行之间的间距*/
+    margin-bottom: 1.6vh; /* 调整行之间的间距*/
     margin-left: 1vh; /*  调整行的左外边距*/
 }
 
