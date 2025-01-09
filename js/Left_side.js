@@ -57,7 +57,7 @@
         }
 
         // 如果连接状态为false，则设置为红色
-        if(!_G.StatusEx.与Api的连接状态){
+        if (!_G.StatusEx.与Api的连接状态) {
             colorClass = "status-inactive";
             text = "访问失败";
         }
@@ -148,6 +148,8 @@
 
 // 炉膛温度图列
 (function () {
+    var 半圆单位 = 400;
+
     var option = {
         series: [
             {
@@ -161,24 +163,24 @@
                 hoverOffset: 0,  // 鼠标经过不变大
                 data: [
                     {
-                        value: 100,
+                        value: 半圆单位 / 2,
                         itemStyle: { // 颜色渐变#00c9e0->#005fc1
                             color: {
                                 type: 'linear',
                                 x: 0,
                                 y: 0,
-                                x2: 0,
-                                y2: 1,
+                                x2: 1,
+                                y2: 0,
                                 colorStops: [
                                     { offset: 0, color: '#00c9e0' },
-                                    { offset: 1, color: '#005fc1' }
+                                    { offset: 1, color: '#f30a62' }
                                 ]
                             }
                         }
                     },
-                    { value: 100, itemStyle: { color: '#12274d' } }, // 颜色#12274d
+                    { value: 半圆单位 / 2, itemStyle: { color: '#12274d' } }, // 颜色#12274d
 
-                    { value: 200, itemStyle: { color: 'transparent' } }// 透明隐藏第三块区域
+                    { value: 半圆单位, itemStyle: { color: 'transparent' } }// 透明隐藏第三块区域
                 ]
             }
         ]
@@ -187,11 +189,15 @@
     myechart.setOption(option);
 
     function updateData() {
-        if (_G.StatusEx.最高温度 == 0 || _G.StatusEx.最高温度 == undefined) return;
-        var a = _G.StatusEx.炉膛温度 / _G.StatusEx.最高温度;
-        var b = 1 - a;
-        option.series[0].data[0].value = a * 200;
-        option.series[0].data[1].value = b * 200;
+        var 百分比 = (_G.Status.炉膛温度 - _G.StatusEx.最低温度) / (_G.StatusEx.最高温度 - _G.StatusEx.最低温度);
+        //判断是否是NaN
+        if (isNaN(百分比)) {
+            return;
+        }
+        var value = Math.round(百分比 * 半圆单位);
+        var value2 = 半圆单位 - value;
+        option.series[0].data[0].value = value;
+        option.series[0].data[1].value = value2;
         myechart.setOption(option);
     }
     updateData();
@@ -199,7 +205,7 @@
     document.addEventListener('DOMContentLoaded', () => {
         // 每 5 秒钟模拟一次 API 调用并更新数据
         setInterval(() => {
-            // updateData();  // 更新页面上的显示
+            updateData();  // 更新页面上的显示
         }, 1000);  // 每 5 秒更新一次
     });
 

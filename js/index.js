@@ -27,9 +27,19 @@
                     clickable: true, // 允许点击分页器进行切换
                 },
             });
+            var gettingData = false;
+            var count = 0;
 
             // 获取并更新数据的操作
             function updateData() {
+                if(gettingData){
+                    count++;
+                    if(count > 10){//超过10次未获取到数据，取消获取标识,让其继续获取数据
+                        gettingData = false;
+                    }
+                    return;
+                }
+                gettingData = true;
                 $.ajax({
                     type: "GET",
                     url: `http://${地址}/biapiserver/getlastdetailofthisdevice`,
@@ -40,6 +50,7 @@
                     },
                     dataType: "json",
                     success: function (data) {
+                        gettingData = false;
                         _G.Watermarks[local_watermark_key].showTag &=
                             ~enum_WatermarkType.查询发生异常;
                         var obj = JSON.parse(data.Data);

@@ -239,6 +239,13 @@ _G.refreshCurrentStatus = function (keys) {
                 }
                 _G.Status[result[i]] = 拉取的数据;
             }
+
+            //小于最小和大于最大温度
+            if (_G.Status.炉膛温度 < _G.StatusEx.最低温度) {
+                _G.StatusEx.最低温度 = _G.Status.炉膛温度;
+            } else if (_G.Status.炉膛温度 > _G.StatusEx.最高温度) {
+                _G.StatusEx.最高温度 = _G.Status.炉膛温度;
+            }
         },
         error: function (error) {
             console.error("Error fetching data:", error);
