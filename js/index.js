@@ -175,10 +175,15 @@
             }
 
             let newDateString = "";
-            let v = data.EquipmentStartTime ?? data.EquipmentPlanTime;
+            let v = data.EquipmentPlanTime ?? data.EquipmentPlanTime;
             if (v != null) {
                 newDateString = v.replace("T", " ");
                 newDateString = _G.convertDateStrToSimpleFormatDateStr(newDateString);
+            }
+            let StartUpTime = "";
+            if (data.EquipmentStartTime != null) {
+                StartUpTime = data.EquipmentStartTime.replace("T", " ");
+                StartUpTime = _G.convertDateStrToSimpleFormatDateStr(StartUpTime);
             }
             let endDateString = "";
             if (data.status == 2) {
@@ -187,6 +192,7 @@
                     endDateString = _G.convertDateStrToSimpleFormatDateStr(endDateString);
                 }
             }
+
 
 
             newCard.innerHTML = `
@@ -198,33 +204,38 @@
                   <div class="layui-col-xs4">
                       <p><strong>物料名称:</strong> ${data.MaterialName}</p>
                   </div>
-                  <div class="layui-col-xs4">
+                  <div class="layui-col-xs2">
                      <p><strong>炉号:</strong> ${data.EquipmentComponentName}</p>
                   </div>
-                  
-              </div>
-              <div class="layui-row">
                   <div class="layui-col-xs2">
                       <p><strong>区域:</strong> ${区域}</p>
                   </div>
-                  <div class="layui-col-xs2">
-                     <p><strong>状态:</strong> <span class="${status_color}">${status_str}</span></p>
-                  </div>
-                  <div class="layui-col-xs4">
-                    <p><strong>开始时间:</strong> ${newDateString}</p>
-                  </div>
-                  <div class="layui-col-xs4">
-                    <p><strong>完成时间:</strong> ${endDateString}</p>
-                  </div>
               </div>
+              
               <div class="layui-row">
-                  <div class="layui-col-xs8">
+                  <div class="layui-col-xs6">
                      <p><strong>规格:</strong> ${data.MaterialSpecType}</p>
+                  </div>
+                  <div class="layui-col-md2">
+                     <p><strong>状态:</strong> <span class="${status_color}">${status_str}</span></p>
                   </div>
                   <div class="layui-col-xs4">
                      <p><strong>制令单号:</strong> ${data.InnerKey}</p>
                   </div>    
               </div>
+              <div class="layui-row">
+                <div class="layui-col-xs4">
+                  <p><strong>计划时间:</strong> ${newDateString}</p>
+                </div>
+                <div class="layui-col-xs4">
+                  <p><strong>启动时间:</strong> ${StartUpTime}</p>
+               </div>
+                <div class="layui-col-xs4">
+                 <p><strong>完成时间:</strong> ${endDateString}</p>
+               </div>
+              </div>
+</div>
+
           </div>
         `;
             return newCard;

@@ -37,6 +37,78 @@
         }, 1000);  // 每 5 秒更新一次
     });
 })();
+// 炉膛温度图列
+(function () {
+    var 半圆单位 = 400;
+
+    var option = {
+        series: [
+            {
+                type: 'pie',
+                radius: ['130%', '150%'],  // 放大图形
+                center: ['50%', '80%'],    // 往下移动  套住75%文字
+                label: {
+                    show: false,
+                },
+                startAngle: 180,
+                hoverOffset: 0,  // 鼠标经过不变大
+                data: [
+                    {
+                        value: 0,  // 初始进度条为0
+                        itemStyle: { // 颜色渐变#00c9e0->#005fc1
+                            color: {
+                                type: 'linear',
+                                x: 0,
+                                y: 0,
+                                x2: 1,
+                                y2: 0,
+                                colorStops: [
+                                    { offset: 0, color: '#00c9e0' },
+                                    { offset: 1, color: '#f30a62' }
+                                ]
+                            }
+                        }
+                    },
+                    { value: 半圆单位, itemStyle: { color: '#12274d' } }, // 颜色#12274d
+
+                    { value: 半圆单位, itemStyle: { color: 'transparent' } }// 透明隐藏第三块区域
+                ]
+            }
+        ]
+    };
+
+    var myechart = echarts.init($('.gauge')[0]);
+    myechart.setOption(option);
+
+    function updateData() {
+        var 百分比 = (_G.Status.炉膛温度 - _G.StatusEx.最低温度) / (_G.StatusEx.最高温度 - _G.StatusEx.最低温度);
+        // 判断是否是NaN
+        if (isNaN(百分比)) {
+            return;
+        }
+        var value = Math.round(百分比 * 半圆单位);
+        var value2 = 半圆单位 - value;
+
+        // 更新进度条
+        option.series[0].data[0].value = value;
+        option.series[0].data[1].value = value2;
+        myechart.setOption(option);
+    }
+
+    updateData(); // 初始化进度条为0
+
+    document.addEventListener('DOMContentLoaded', () => {
+        // 每 1 秒钟模拟一次 API 调用并更新数据
+        setInterval(() => {
+            updateData();  // 更新页面上的显示
+        }, 1000);  // 每 1 秒更新一次
+    });
+
+    // 监听窗口大小变化，自动调整图表尺寸
+    window.addEventListener('resize', function () {
+        myechart.resize();  // 调整图表大小
+    });
+})();
 
 // 实时区间（定时器）
 (function () {
@@ -146,71 +218,3 @@
     updateData();
 })();
 
-// 炉膛温度图列
-(function () {
-    var 半圆单位 = 400;
-
-    var option = {
-        series: [
-            {
-                type: 'pie',
-                radius: ['130%', '150%'],  // 放大图形
-                center: ['50%', '80%'],    // 往下移动  套住75%文字
-                label: {
-                    show: false,
-                },
-                startAngle: 180,
-                hoverOffset: 0,  // 鼠标经过不变大
-                data: [
-                    {
-                        value: 半圆单位 / 2,
-                        itemStyle: { // 颜色渐变#00c9e0->#005fc1
-                            color: {
-                                type: 'linear',
-                                x: 0,
-                                y: 0,
-                                x2: 1,
-                                y2: 0,
-                                colorStops: [
-                                    { offset: 0, color: '#00c9e0' },
-                                    { offset: 1, color: '#f30a62' }
-                                ]
-                            }
-                        }
-                    },
-                    { value: 半圆单位 / 2, itemStyle: { color: '#12274d' } }, // 颜色#12274d
-
-                    { value: 半圆单位, itemStyle: { color: 'transparent' } }// 透明隐藏第三块区域
-                ]
-            }
-        ]
-    };
-    var myechart = echarts.init($('.gauge')[0]);
-    myechart.setOption(option);
-
-    function updateData() {
-        var 百分比 = (_G.Status.炉膛温度 - _G.StatusEx.最低温度) / (_G.StatusEx.最高温度 - _G.StatusEx.最低温度);
-        //判断是否是NaN
-        if (isNaN(百分比)) {
-            return;
-        }
-        var value = Math.round(百分比 * 半圆单位);
-        var value2 = 半圆单位 - value;
-        option.series[0].data[0].value = value;
-        option.series[0].data[1].value = value2;
-        myechart.setOption(option);
-    }
-    updateData();
-
-    document.addEventListener('DOMContentLoaded', () => {
-        // 每 5 秒钟模拟一次 API 调用并更新数据
-        setInterval(() => {
-            updateData();  // 更新页面上的显示
-        }, 1000);  // 每 5 秒更新一次
-    });
-
-    // 监听窗口大小变化，自动调整图表尺寸
-    window.addEventListener('resize', function () {
-        myechart.resize();  // 调整图表大小
-    });
-})();
