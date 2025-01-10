@@ -110,6 +110,10 @@
                 _G.Watermarks[local_watermark_key].showTag &= ~enum_WatermarkType.查询发生异常;
 
                 var obj = JSON.parse(data.Data)
+                if (obj == null) {
+                    console.log("获取数据失败");
+                    return;
+                }
 
                 if (输出调试信息 === true) {
                     console.log(obj)
@@ -240,6 +244,11 @@
                 _G.Watermarks[local_watermark_key].showTag &= ~enum_WatermarkType.查询发生异常;
 
                 var obj = JSON.parse(data.Data)
+
+                if (obj == null) {
+                    console.log("获取数据失败");
+                    return;
+                }
 
                 if (输出调试信息 === true) {
                     console.log(obj)

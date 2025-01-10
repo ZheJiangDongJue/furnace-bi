@@ -32,9 +32,9 @@
 
             // 获取并更新数据的操作
             function updateData() {
-                if(gettingData){
+                if (gettingData) {
                     count++;
-                    if(count > 10){//超过10次未获取到数据，取消获取标识,让其继续获取数据
+                    if (count > 10) {//超过10次未获取到数据，取消获取标识,让其继续获取数据
                         gettingData = false;
                     }
                     return;
@@ -59,7 +59,7 @@
                             _G.StatusEx.最后完整烧炉的启动时间_str;
 
                         obj.forEach((element) => {
-                            var 单据设备启动时间 = new Date(element.EquipmentStartTime);
+                            var 单据设备计划时间 = new Date(element.EquipmentPlanTime);
                             var 最后启动时间 = new Date(_G.StatusEx.最后启动时间_str);
                             var 最后完整烧炉的结束时间 = new Date(
                                 _G.StatusEx.最后完整烧炉的结束时间_str
@@ -67,13 +67,13 @@
                             var status = -1;
                             if (最后启动时间_无论是否结束 == null) {
                                 status = -1; //...
-                            }else if((element.DailyPlanStatus & 4) == 4){
+                            } else if ((element.DailyPlanStatus & 4) == 4) {
                                 status = 3;//已结案
                             } else if (element.eedid == null) {
                                 status = 0; //未开始
-                            } else if (_G.StatusEx.最后完整烧炉的结束时间_str != null && 单据设备启动时间 < 最后完整烧炉的结束时间) {
+                            } else if (_G.StatusEx.最后完整烧炉的结束时间_str != null && 单据设备计划时间 < 最后完整烧炉的结束时间) {
                                 status = 2; //已完成
-                            } else if (_G.StatusEx.最后启动时间_str != null && 单据设备启动时间 > 最后启动时间) {
+                            } else if (_G.StatusEx.最后启动时间_str != null && 单据设备计划时间 > 最后启动时间) {
                                 status = 1; //进行中
                             } else {
                                 status = 0; //未开始
@@ -174,16 +174,22 @@
                     break;
             }
 
-            let newDateString = data.EquipmentStartTime.replace("T", " ");
-            newDateString = _G.convertDateStrToSimpleFormatDateStr(newDateString);
+            let newDateString = "";
+            let v = data.EquipmentStartTime ?? data.EquipmentPlanTime;
+            if (v != null) {
+                newDateString = v.replace("T", " ");
+                newDateString = _G.convertDateStrToSimpleFormatDateStr(newDateString);
+            }
             let endDateString = "";
             if (data.status == 2) {
-                endDateString = data.EquipmentEndTime.replace("T", " ");
-                endDateString = _G.convertDateStrToSimpleFormatDateStr(endDateString);
+                if (data.EquipmentEndTime != null) {
+                    endDateString = data.EquipmentEndTime.replace("T", " ");
+                    endDateString = _G.convertDateStrToSimpleFormatDateStr(endDateString);
+                }
             }
 
 
-        newCard.innerHTML = `
+            newCard.innerHTML = `
           <div class="swiper-slide">
               <div class="layui-row">
                   <div class="layui-col-xs4">
